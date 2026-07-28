@@ -1,105 +1,167 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
-import { User, Briefcase } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
+import { User, Briefcase, ArrowRight } from 'lucide-react'
 import Image from 'next/image'
 
 export default function Hero() {
-  const textRef = useRef<HTMLDivElement>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [isVisible, setIsVisible] = useState(false)
 
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('animate-fadeIn')
+          if (entry.isIntersecting && !isVisible) {
+            setIsVisible(true)
           }
         })
       },
       { threshold: 0.1 }
     )
 
-    if (textRef.current) {
-      observer.observe(textRef.current)
+    if (containerRef.current) {
+      observer.observe(containerRef.current)
     }
 
     return () => observer.disconnect()
-  }, [])
+  }, [isVisible])
 
   return (
-    <section className="relative pt-24 md:pt-36 pb-12 md:pb-16 bg-white overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 items-center">
+    <section ref={containerRef} className="relative min-h-[85vh] pt-24 md:pt-32 pb-12 md:pb-16 flex items-center bg-white overflow-hidden">
+      {/* Background ambient gradient */}
+      <div className="absolute top-0 right-0 -mr-20 -mt-20 w-[500px] h-[500px] bg-brand-gold/5 rounded-full blur-3xl pointer-events-none"></div>
+      <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-[400px] h-[400px] bg-brand-navy/5 rounded-full blur-3xl pointer-events-none"></div>
+
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-12 lg:gap-16 items-center">
           
           {/* Left Column */}
-          <div ref={textRef} className="col-span-1 md:col-span-7 relative z-10 animate-fadeIn space-y-6">
-            <div>
-              <h1 className="text-4xl sm:text-5xl md:text-[54px] font-serif font-bold text-brand-navy leading-tight tracking-tight mb-4">
-                José Luis Zelada Minaya
+          <div className="col-span-1 md:col-span-7 relative z-10 space-y-8">
+            <div 
+              className="space-y-4"
+              style={{
+                animationName: isVisible ? 'fadeInUp' : 'none',
+                animationDuration: '0.8s',
+                animationTimingFunction: 'ease-out',
+                animationFillMode: 'forwards',
+                opacity: 0,
+              }}
+            >
+              <h1 className="text-4xl sm:text-5xl lg:text-[72px] font-serif font-bold text-brand-navy leading-[1.1] tracking-tight">
+                José Luis Zelada <br className="hidden lg:block"/> Minaya
               </h1>
-              <p className="text-sm sm:text-base text-brand-navy font-semibold tracking-wider flex flex-wrap gap-2 items-center">
-                <span>Consultor en Gestión del Talento Humano</span>
-                <span className="text-gray-300">|</span>
-                <span>Investigador</span>
-                <span className="text-gray-300">|</span>
-                <span>Autor</span>
-              </p>
               
-              {/* Gold Divider Line - matches screenshot length */}
-              <div className="w-full max-w-lg h-[2px] bg-brand-gold mt-4"></div>
+              {/* Single left border for the whole group */}
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-base sm:text-lg text-gray-600 font-medium tracking-wide mt-4 pl-4 border-l-2 border-brand-gold">
+                <span className="text-brand-navy font-bold">Consultor en Gestión del Talento Humano</span>
+                <span className="text-brand-gold font-bold hidden sm:inline">•</span>
+                <span className="text-brand-navy font-bold">Investigador</span>
+                <span className="text-brand-gold font-bold hidden sm:inline">•</span>
+                <span className="text-brand-navy font-bold">Autor</span>
+              </div>
             </div>
             
             {/* Quote */}
-            <p className="text-base sm:text-lg italic text-gray-700 leading-relaxed max-w-xl font-serif">
-              "Generando conocimiento para desarrollar personas, fortalecer organizaciones y contribuir al progreso de la sociedad."
-            </p>
+            <div 
+              className="relative pl-6 border-l-2 border-brand-gold/30 py-2"
+              style={{
+                animationName: isVisible ? 'fadeInUp' : 'none',
+                animationDuration: '0.8s',
+                animationTimingFunction: 'ease-out',
+                animationFillMode: 'forwards',
+                animationDelay: '0.2s',
+                opacity: 0,
+              }}
+            >
+              <p className="text-lg md:text-xl text-gray-600 leading-relaxed max-w-2xl font-serif italic">
+                "Generando conocimiento para desarrollar personas, fortalecer organizaciones y contribuir al progreso de la sociedad."
+              </p>
+            </div>
 
             {/* Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 pt-2">
-              <button className="flex items-center justify-center gap-2 bg-brand-navy text-white px-6 py-3.5 rounded font-bold text-xs tracking-wider transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 group">
-                <User size={16} className="group-hover:scale-110 transition-transform duration-300 flex-shrink-0" />
-                <span>CONOCE MÁS SOBRE MÍ</span>
+            <div 
+              className="flex flex-col sm:flex-row gap-4 pt-4"
+              style={{
+                animationName: isVisible ? 'fadeInUp' : 'none',
+                animationDuration: '0.8s',
+                animationTimingFunction: 'ease-out',
+                animationFillMode: 'forwards',
+                animationDelay: '0.4s',
+                opacity: 0,
+              }}
+            >
+              <button className="flex items-center justify-center gap-2 bg-brand-navy text-white px-8 py-4 rounded font-bold text-xs tracking-[0.1em] transition-all duration-300 hover:bg-brand-navy/90 hover:shadow-xl hover:-translate-y-1 active:translate-y-0 group">
+                <User size={16} className="text-brand-gold group-hover:scale-110 transition-transform duration-300" />
+                <span>CONOCE MÁS</span>
               </button>
-              <button className="flex items-center justify-center gap-2 border-2 border-brand-navy text-brand-navy px-6 py-3.5 rounded font-bold text-xs tracking-wider transition-all duration-300 hover:bg-cream hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 group">
-                <Briefcase size={16} className="group-hover:scale-110 transition-transform duration-300 flex-shrink-0" />
-                <span>MIS CONSULTORÍAS</span>
+              <button className="flex items-center justify-center gap-2 border border-gray-200 text-brand-navy px-8 py-4 rounded font-bold text-xs tracking-[0.1em] transition-all duration-300 hover:border-brand-navy hover:bg-gray-50 hover:shadow-md hover:-translate-y-1 active:translate-y-0 group">
+                <span>MIS SERVICIOS</span>
+                <ArrowRight size={16} className="text-brand-navy group-hover:translate-x-1 transition-transform duration-300" />
               </button>
             </div>
           </div>
 
-          {/* Right Column - Image */}
-          <div className="col-span-1 md:col-span-5 flex justify-center md:justify-end animate-fade-in-scale relative">
-            <div className="relative w-full max-w-[360px] md:max-w-[400px] group z-10">
-              {/* Soft shadows and clean image container as seen in the screenshot */}
-              <div className="relative rounded-2xl overflow-hidden shadow-2xl transition-transform duration-500 group-hover:scale-[1.02]">
-                <Image
-                  src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&h=700&fit=crop"
-                  alt="José Luis Zelada Minaya"
-                  width={600}
-                  height={700}
-                  className="object-cover w-full h-auto"
-                  priority
-                />
+          {/* Right Column - Placeholder Frame */}
+          <div 
+            className="col-span-1 md:col-span-5 flex justify-center md:justify-end relative mt-8 md:mt-0"
+            style={{
+              animationName: isVisible ? 'fadeInScale' : 'none',
+              animationDuration: '1s',
+              animationTimingFunction: 'ease-out',
+              animationFillMode: 'forwards',
+              animationDelay: '0.3s',
+              opacity: 0,
+            }}
+          >
+            <div className="relative w-full max-w-[320px] md:max-w-[360px] group z-10">
+              {/* Decorative background element */}
+              <div className="absolute -inset-4 bg-brand-gold/10 rounded-2xl transform rotate-3 transition-transform duration-500 group-hover:rotate-6 -z-10"></div>
+              <div className="absolute -inset-4 bg-brand-navy/5 rounded-2xl transform -rotate-2 transition-transform duration-500 group-hover:-rotate-4 -z-10"></div>
+              
+              {/* Main placeholder container */}
+              <div className="relative rounded-2xl overflow-hidden shadow-2xl transition-transform duration-500 group-hover:scale-[1.02] bg-white border border-gray-100 p-2 aspect-[4/5]">
+                <div className="relative rounded-xl overflow-hidden w-full h-full bg-gray-50 flex items-center justify-center border-2 border-dashed border-gray-200">
+                  <p className="text-sm font-bold text-gray-400 tracking-widest uppercase">Espacio para Foto</p>
+                </div>
               </div>
             </div>
           </div>
+
         </div>
       </div>
 
       <style jsx>{`
-        @keyframes fadeIn {
+        @keyframes fadeInUp {
           from {
             opacity: 0;
-            transform: translateY(20px);
+            transform: translateY(30px);
           }
           to {
             opacity: 1;
             transform: translateY(0);
           }
         }
-
-        .animate-fadeIn {
-          animation: fadeIn 0.8s ease-out forwards;
+        @keyframes fadeInScale {
+          from {
+            opacity: 0;
+            transform: scale(0.95) translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+          }
+        }
+        .animate-bounce-slow {
+          animation: bounce 3s infinite ease-in-out;
+        }
+        @keyframes bounce {
+          0%, 100% {
+            transform: translateY(0);
+          }
+          50% {
+            transform: translateY(-10px);
+          }
         }
       `}</style>
     </section>
