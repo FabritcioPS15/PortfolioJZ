@@ -35,10 +35,10 @@ export default function Hero() {
 
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-12 lg:gap-16 items-center">
-          
+
           {/* Left Column */}
           <div className="col-span-1 md:col-span-7 relative z-10 space-y-8">
-            <div 
+            <div
               className="space-y-4"
               style={{
                 animationName: isVisible ? 'fadeInUp' : 'none',
@@ -49,22 +49,22 @@ export default function Hero() {
               }}
             >
               <h1 className="text-4xl sm:text-5xl lg:text-[72px] font-serif font-bold text-brand-navy leading-[1.1] tracking-tight">
-                José Luis Zelada <br className="hidden lg:block"/> Minaya
+                José Luis Zelada<br className="hidden lg:block" />
               </h1>
-              
+
               {/* Single left border for the whole group */}
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-base sm:text-lg text-gray-600 font-medium tracking-wide mt-4 pl-4 border-l-2 border-brand-gold">
-                <span className="text-brand-navy font-bold">Consultor en Gestión del Talento Humano</span>
-                <span className="text-brand-gold font-bold hidden sm:inline">•</span>
-                <span className="text-brand-navy font-bold">Investigador</span>
-                <span className="text-brand-gold font-bold hidden sm:inline">•</span>
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-base sm:text-lg text-gray-600 font-medium tracking-wide mt-4">
+                <span className="text-brand-navy font-bold">Consultor</span>
+                <span className="text-gray-300 hidden sm:inline">|</span>
                 <span className="text-brand-navy font-bold">Autor</span>
+                <span className="text-gray-300 hidden sm:inline">|</span>
+                <span className="text-brand-navy font-bold">Coach</span>
               </div>
             </div>
-            
+
             {/* Quote */}
-            <div 
-              className="relative pl-6 border-l-2 border-brand-gold/30 py-2"
+            <div
+              className="relative py-2"
               style={{
                 animationName: isVisible ? 'fadeInUp' : 'none',
                 animationDuration: '0.8s',
@@ -75,12 +75,12 @@ export default function Hero() {
               }}
             >
               <p className="text-lg md:text-xl text-gray-600 leading-relaxed max-w-2xl font-serif italic">
-                "Generando conocimiento para desarrollar personas, fortalecer organizaciones y contribuir al progreso de la sociedad."
+                “Transformando el talento humano en una ventaja competitiva, desarrollando líderes, fortaleciendo equipos y creando organizaciones preparadas para los desafíos del futuro”.
               </p>
             </div>
 
             {/* Buttons */}
-            <div 
+            <div
               className="flex flex-col sm:flex-row gap-4 pt-4"
               style={{
                 animationName: isVisible ? 'fadeInUp' : 'none',
@@ -91,19 +91,25 @@ export default function Hero() {
                 opacity: 0,
               }}
             >
-              <button className="flex items-center justify-center gap-2 bg-brand-navy text-white px-8 py-4 rounded font-bold text-xs tracking-[0.1em] transition-all duration-300 hover:bg-brand-navy/90 hover:shadow-xl hover:-translate-y-1 active:translate-y-0 group">
+              <button 
+                onClick={() => document.getElementById('sobremí')?.scrollIntoView({ behavior: 'smooth' })}
+                className="flex items-center justify-center gap-2 bg-brand-navy text-white px-8 py-4 rounded font-bold text-xs tracking-[0.1em] transition-all duration-300 hover:bg-brand-navy/90 hover:shadow-xl hover:-translate-y-1 active:translate-y-0 group"
+              >
                 <User size={16} className="text-brand-gold group-hover:scale-110 transition-transform duration-300" />
                 <span>CONOCE MÁS</span>
               </button>
-              <button className="flex items-center justify-center gap-2 border border-gray-200 text-brand-navy px-8 py-4 rounded font-bold text-xs tracking-[0.1em] transition-all duration-300 hover:border-brand-navy hover:bg-gray-50 hover:shadow-md hover:-translate-y-1 active:translate-y-0 group">
-                <span>MIS SERVICIOS</span>
+              <button 
+                onClick={() => document.getElementById('consultorías')?.scrollIntoView({ behavior: 'smooth' })}
+                className="flex items-center justify-center gap-2 border border-gray-200 text-brand-navy px-8 py-4 rounded font-bold text-xs tracking-[0.1em] transition-all duration-300 hover:border-brand-navy hover:bg-gray-50 hover:shadow-md hover:-translate-y-1 active:translate-y-0 group"
+              >
+                <span>MIS CONSULTORÍAS</span>
                 <ArrowRight size={16} className="text-brand-navy group-hover:translate-x-1 transition-transform duration-300" />
               </button>
             </div>
           </div>
 
           {/* Right Column - Placeholder Frame */}
-          <div 
+          <div
             className="col-span-1 md:col-span-5 flex justify-center md:justify-end relative mt-8 md:mt-0"
             style={{
               animationName: isVisible ? 'fadeInScale' : 'none',
@@ -118,7 +124,7 @@ export default function Hero() {
               {/* Decorative background element */}
               <div className="absolute -inset-4 bg-brand-gold/10 rounded-2xl transform rotate-3 transition-transform duration-500 group-hover:rotate-6 -z-10"></div>
               <div className="absolute -inset-4 bg-brand-navy/5 rounded-2xl transform -rotate-2 transition-transform duration-500 group-hover:-rotate-4 -z-10"></div>
-              
+
               {/* Main placeholder container */}
               <div className="relative rounded-2xl overflow-hidden shadow-2xl transition-transform duration-500 group-hover:scale-[1.02] bg-white border border-gray-100 p-2 aspect-[4/5]">
                 <div className="relative rounded-xl overflow-hidden w-full h-full bg-gray-50 flex items-center justify-center border-2 border-dashed border-gray-200">

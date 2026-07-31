@@ -1,22 +1,22 @@
 import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
-import { Playfair_Display, Poppins } from 'next/font/google'
+import { DM_Serif_Display, DM_Sans } from 'next/font/google'
 import './globals.css'
 
-const playfairDisplay = Playfair_Display({ 
+const dmSerifDisplay = DM_Serif_Display({
   subsets: ['latin'],
   variable: '--font-serif',
-  weight: ['400', '500', '600', '700']
+  weight: ['400']
 })
 
-const poppins = Poppins({ 
+const dmSans = DM_Sans({
   subsets: ['latin'],
   variable: '--font-sans',
   weight: ['300', '400', '500', '600', '700']
 })
 
 export const metadata: Metadata = {
-  title: 'José Luis Zelada Minaya | Consultor en Gestión del Talento Humano',
+  title: 'José Luis Zelada | Consultor en Gestión del Talento Humano',
   description: 'Consultor especializado en gestión del talento humano, desarrollo organizacional y consultoría estratégica. Acompaño a personas y organizaciones hacia el éxito.',
   generator: 'v0.app',
   icons: {
@@ -51,7 +51,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="es" className={`${playfairDisplay.variable} ${poppins.variable}`}>
+    <html lang="es" className={`${dmSerifDisplay.variable} ${dmSans.variable}`}>
       <body className="antialiased font-sans bg-white text-foreground">
         {children}
         {process.env.NODE_ENV === 'production' && <Analytics />}

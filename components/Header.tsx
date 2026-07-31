@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { Mail, Menu, X } from 'lucide-react'
+import { Menu, X } from 'lucide-react'
 
 export default function Header({ isScrolled }: { isScrolled: boolean }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
@@ -19,13 +19,12 @@ export default function Header({ isScrolled }: { isScrolled: boolean }) {
 
   return (
     <header
-      className={`fixed w-full top-0 z-50 transition-all duration-300 backdrop-blur-md ${
-        isScrolled ? 'bg-white/95 shadow-lg' : 'bg-white'
-      }`}
+      className={`fixed w-full top-0 z-50 transition-all duration-300 backdrop-blur-md ${isScrolled ? 'bg-white/95 shadow-lg' : 'bg-white'
+        }`}
     >
       {/* Top gradient line */}
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-brand-gold to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-      
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
@@ -34,7 +33,7 @@ export default function Header({ isScrolled }: { isScrolled: boolean }) {
             <div className="h-8 w-px bg-brand-gold"></div>
             <div className="transition-all duration-300">
               <p className="text-brand-navy font-sans font-bold text-xs tracking-wider leading-tight group-hover:text-brand-gold transition-colors duration-300">
-                JOSÉ LUIS<br />ZELADA MINAYA
+                JOSÉ LUIS<br />ZELADA
               </p>
             </div>
           </Link>
@@ -45,11 +44,10 @@ export default function Header({ isScrolled }: { isScrolled: boolean }) {
               <button
                 key={item}
                 onClick={() => scrollToSection(item.toLowerCase().replace(/\s+/g, ''))}
-                className={`text-xs font-semibold tracking-wider transition-all duration-300 relative pb-2 ${
-                  index === 0
+                className={`text-xs font-semibold tracking-wider transition-all duration-300 relative pb-2 ${index === 0
                     ? 'text-brand-navy'
                     : 'text-brand-navy hover:text-brand-gold'
-                } group`}
+                  } group`}
               >
                 {item}
                 {index === 0 ? (
@@ -61,14 +59,7 @@ export default function Header({ isScrolled }: { isScrolled: boolean }) {
             ))}
           </nav>
 
-          {/* CTA Button - Desktop */}
-          <button
-            onClick={() => scrollToSection('contacto')}
-            className="hidden md:flex items-center gap-2 bg-brand-navy text-white px-5 py-2.5 rounded hover:bg-brand-navy/90 hover:shadow-md transition-all duration-300 group"
-          >
-            <Mail size={16} className="group-hover:scale-110 transition-transform duration-300" />
-            <span className="text-xs font-semibold tracking-wider">CONTACTO</span>
-          </button>
+
 
           {/* Mobile Menu Button */}
           <button
@@ -92,15 +83,7 @@ export default function Header({ isScrolled }: { isScrolled: boolean }) {
                 <span className="group-hover:translate-x-1 transition-transform duration-300 inline-block">{item}</span>
               </button>
             ))}
-            <button
-              onClick={() => {
-                scrollToSection('contacto')
-              }}
-              className="w-[calc(100%-2rem)] mx-4 mt-3 flex items-center justify-center gap-2 bg-brand-navy text-white px-6 py-3 rounded hover:bg-brand-navy/90 transition-all duration-300 group"
-            >
-              <Mail size={16} className="group-hover:scale-110 transition-transform duration-300" />
-              <span className="text-xs font-semibold tracking-wider">CONTACTO</span>
-            </button>
+
           </nav>
         )}
       </div>
