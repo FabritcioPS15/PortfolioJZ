@@ -66,9 +66,12 @@ export default function Header() {
           {/* Logo */}
           <Link href="#" className="flex items-center gap-3 flex-shrink-0 group">
             <Image src="/images/LogoJLZ.png" alt="Logo" width={150} height={40} className="h-10 w-auto transition-transform duration-300 group-hover:scale-105" style={{ width: 'auto' }} priority />
-            <div className="hidden sm:block h-8 w-px bg-brand-gold opacity-70"></div>
-            <div className="hidden sm:block transition-all duration-300">
-              <p className="text-brand-navy font-sans font-bold text-sm tracking-wider leading-tight group-hover:text-brand-gold transition-colors duration-300 whitespace-nowrap">
+            <div className="h-6 sm:h-8 w-px bg-brand-gold opacity-70"></div>
+            <div className="transition-all duration-300">
+              <p className="sm:hidden text-brand-navy font-serif font-bold text-xl tracking-wider leading-tight group-hover:text-brand-gold transition-colors duration-300 whitespace-nowrap">
+                JZ
+              </p>
+              <p className="hidden sm:block text-brand-navy font-sans font-bold text-sm tracking-wider leading-tight group-hover:text-brand-gold transition-colors duration-300 whitespace-nowrap">
                 JOSÉ LUIS ZELADA
               </p>
             </div>

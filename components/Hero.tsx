@@ -28,16 +28,16 @@ export default function Hero() {
   }, [isVisible])
 
   return (
-    <section ref={containerRef} id="inicio" className="relative min-h-[85vh] lg:min-h-screen pt-24 md:pt-32 pb-8 md:pb-16 flex items-center bg-white overflow-hidden">
+    <section ref={containerRef} id="inicio" className="relative min-h-screen sm:min-h-[85vh] lg:min-h-screen pt-20 md:pt-32 pb-8 md:pb-16 flex items-center bg-white overflow-hidden">
       {/* Background ambient gradient */}
       <div className="absolute top-0 right-0 -mr-20 -mt-20 w-[500px] h-[500px] bg-brand-gold/5 rounded-full blur-3xl pointer-events-none"></div>
       <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-[400px] h-[400px] bg-brand-navy/5 rounded-full blur-3xl pointer-events-none"></div>
 
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 lg:gap-16 items-center">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 sm:gap-8 md:gap-12 lg:gap-16 items-center">
 
           {/* Left Column */}
-          <div className="col-span-1 md:col-span-7 relative z-10 space-y-6 md:space-y-8">
+          <div className="col-span-1 md:col-span-7 relative z-10 space-y-5 md:space-y-8">
             <div
               className="space-y-4 text-center md:text-left"
               style={{
