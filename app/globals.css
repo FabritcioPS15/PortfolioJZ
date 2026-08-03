@@ -5,8 +5,8 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --font-serif: 'Playfair Display', serif;
-  --font-sans: 'Poppins', sans-serif;
+  --font-serif: 'Space Grotesk', sans-serif;
+  --font-sans: 'Inter', sans-serif;
   --color-brand-navy: #0F2440;
   --color-brand-gold: #C9A35C;
   --color-cream: #FDF3E3;

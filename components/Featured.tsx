@@ -76,7 +76,7 @@ export default function Featured() {
   }, [researchItems.length, articleItems.length])
 
   return (
-    <section className="relative py-12 md:py-16 bg-gray-50 overflow-hidden">
+    <section id="proyectos" className="relative py-12 md:py-16 bg-gray-50 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         <div
@@ -121,6 +121,7 @@ export default function Featured() {
                     width={500}
                     height={300}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-102"
+                    priority={index === 0}
                   />
                 </div>
               ))}
@@ -206,6 +207,7 @@ export default function Featured() {
                     width={500}
                     height={300}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-102"
+                    priority={index === 0}
                   />
                 </div>
               ))}

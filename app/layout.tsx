@@ -1,15 +1,15 @@
 import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
-import { Playfair_Display, Poppins } from 'next/font/google'
+import { Space_Grotesk, Inter } from 'next/font/google'
 import './globals.css'
 
-const playfairDisplay = Playfair_Display({
+const spaceGrotesk = Space_Grotesk({
   subsets: ['latin'],
   variable: '--font-serif',
-  weight: ['400', '700']
+  weight: ['400', '500', '600', '700']
 })
 
-const poppins = Poppins({
+const inter = Inter({
   subsets: ['latin'],
   variable: '--font-sans',
   weight: ['400', '500', '600', '700']
@@ -43,7 +43,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="es" className={`${playfairDisplay.variable} ${poppins.variable}`}>
+    <html lang="es" className={`${spaceGrotesk.variable} ${inter.variable}`}>
       <body className="antialiased font-sans bg-white text-foreground">
         {children}
         {process.env.NODE_ENV === 'production' && <Analytics />}
