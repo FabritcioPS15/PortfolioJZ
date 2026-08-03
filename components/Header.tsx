@@ -1,11 +1,23 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Menu, X } from 'lucide-react'
 
-export default function Header({ isScrolled }: { isScrolled: boolean }) {
+export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isScrolled, setIsScrolled] = useState(false)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50)
+    }
+
+    handleScroll()
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   const navItems = ['INICIO', 'SOBRE MÍ', 'CONSULTORÍAS', 'INVESTIGACIONES', 'ARTÍCULOS']
 
@@ -29,9 +41,9 @@ export default function Header({ isScrolled }: { isScrolled: boolean }) {
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <Link href="#" className="flex items-center gap-3 flex-shrink-0 group">
-            <span className="text-brand-navy font-serif font-bold text-3xl transition-colors duration-300 group-hover:text-brand-gold">JZ</span>
-            <div className="h-8 w-px bg-brand-gold"></div>
-            <div className="transition-all duration-300">
+            <Image src="/images/LogoJLZ.png" alt="Logo" width={150} height={40} className="h-10 w-auto transition-transform duration-300 group-hover:scale-105" priority />
+            <div className="hidden sm:block h-8 w-px bg-brand-gold opacity-70"></div>
+            <div className="hidden sm:block transition-all duration-300">
               <p className="text-brand-navy font-sans font-bold text-xs tracking-wider leading-tight group-hover:text-brand-gold transition-colors duration-300">
                 JOSÉ LUIS<br />ZELADA
               </p>
@@ -45,8 +57,8 @@ export default function Header({ isScrolled }: { isScrolled: boolean }) {
                 key={item}
                 onClick={() => scrollToSection(item.toLowerCase().replace(/\s+/g, ''))}
                 className={`text-xs font-semibold tracking-wider transition-all duration-300 relative pb-2 ${index === 0
-                    ? 'text-brand-navy'
-                    : 'text-brand-navy hover:text-brand-gold'
+                  ? 'text-brand-navy'
+                  : 'text-brand-navy hover:text-brand-gold'
                   } group`}
               >
                 {item}

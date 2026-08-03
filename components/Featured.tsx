@@ -7,6 +7,45 @@ import Image from 'next/image'
 export default function Featured() {
   const containerRef = useRef<HTMLDivElement>(null)
   const [isVisible, setIsVisible] = useState(false)
+  
+  const [currentResearch, setCurrentResearch] = useState(0)
+  const [currentArticle, setCurrentArticle] = useState(0)
+
+  const researchItems = [
+    {
+      title: 'Gestión del talento humano y desempeño organizacional: un análisis en el contexto peruano',
+      year: '2024',
+      image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=500&h=300&fit=crop',
+    },
+    {
+      title: 'Impacto de la inteligencia artificial en la selección de personal',
+      year: '2023',
+      image: 'https://images.unsplash.com/photo-1573164713988-8665fc963095?w=500&h=300&fit=crop',
+    },
+    {
+      title: 'Estrategias de retención de talento en la nueva normalidad',
+      year: '2023',
+      image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=500&h=300&fit=crop',
+    }
+  ]
+
+  const articleItems = [
+    {
+      title: 'Liderazgo consciente: la clave para equipos comprometidos y organizaciones sostenibles',
+      date: 'Mayo 2024',
+      image: 'https://images.unsplash.com/photo-1455390582262-044cdead277a?w=500&h=300&fit=crop',
+    },
+    {
+      title: 'Cómo construir una cultura organizacional resiliente en tiempos de cambio',
+      date: 'Abril 2024',
+      image: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=500&h=300&fit=crop',
+    },
+    {
+      title: 'El rol del feedback continuo en el desarrollo profesional de tu equipo',
+      date: 'Marzo 2024',
+      image: 'https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=500&h=300&fit=crop',
+    }
+  ]
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -27,6 +66,14 @@ export default function Featured() {
 
     return () => observer.disconnect()
   }, [isVisible])
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentResearch((prev) => (prev + 1) % researchItems.length)
+      setCurrentArticle((prev) => (prev + 1) % articleItems.length)
+    }, 5000)
+    return () => clearInterval(timer)
+  }, [researchItems.length, articleItems.length])
 
   return (
     <section className="relative py-12 md:py-16 bg-gray-50 overflow-hidden">
@@ -63,26 +110,40 @@ export default function Featured() {
 
             {/* Image */}
             <div className="relative w-full h-44 overflow-hidden bg-gray-100">
-              <Image
-                src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=500&h=300&fit=crop"
-                alt="Investigación"
-                width={500}
-                height={300}
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-102"
-              />
+              {researchItems.map((item, index) => (
+                <div 
+                  key={index}
+                  className={`absolute inset-0 transition-opacity duration-1000 ${index === currentResearch ? 'opacity-100' : 'opacity-0'}`}
+                >
+                  <Image
+                    src={item.image}
+                    alt={item.title}
+                    width={500}
+                    height={300}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-102"
+                  />
+                </div>
+              ))}
             </div>
 
             {/* Content */}
-            <div className="p-5 flex-grow flex flex-col justify-between">
-              <div className="space-y-2">
-                <h3 className="font-serif font-bold text-base text-brand-navy leading-snug">
-                  Gestión del talento humano y desempeño organizacional: un análisis en el contexto peruano
-                </h3>
-                <p className="text-xs text-gray-400 font-medium">
-                  2024
-                </p>
+            <div className="p-5 flex-grow flex flex-col justify-between relative overflow-hidden">
+              <div className="relative h-24">
+                {researchItems.map((item, index) => (
+                  <div 
+                    key={index}
+                    className={`absolute inset-0 transition-opacity duration-500 space-y-2 ${index === currentResearch ? 'opacity-100 pointer-events-auto z-10' : 'opacity-0 pointer-events-none z-0'}`}
+                  >
+                    <h3 className="font-serif font-bold text-base text-brand-navy leading-snug line-clamp-3">
+                      {item.title}
+                    </h3>
+                    <p className="text-xs text-gray-400 font-medium">
+                      {item.year}
+                    </p>
+                  </div>
+                ))}
               </div>
-              <div className="pt-4 flex flex-col gap-4">
+              <div className="pt-4 flex flex-col gap-4 mt-auto z-10 bg-white">
                 <a
                   href="#"
                   className="text-xs font-semibold text-brand-navy hover:text-brand-gold transition-colors duration-300 inline-flex items-center gap-1"
@@ -90,14 +151,16 @@ export default function Featured() {
                   Leer más <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>
                 </a>
                 
-                {/* Dots indicator - 5 dots, 2nd is gold */}
+                {/* Dots indicator */}
                 <div className="flex justify-center gap-1.5 pt-2">
-                  {[0, 1, 2, 3, 4].map((dot) => (
-                    <div
-                      key={dot}
+                  {researchItems.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setCurrentResearch(index)}
                       className={`h-1.5 rounded-full transition-all duration-300 ${
-                        dot === 1 ? 'w-4 bg-brand-gold' : 'w-1.5 bg-gray-200'
+                        index === currentResearch ? 'w-4 bg-brand-gold' : 'w-1.5 bg-gray-200 hover:bg-gray-300'
                       }`}
+                      aria-label={`Go to slide ${index + 1}`}
                     />
                   ))}
                 </div>
@@ -132,26 +195,40 @@ export default function Featured() {
 
             {/* Image */}
             <div className="relative w-full h-44 overflow-hidden bg-gray-100">
-              <Image
-                src="https://images.unsplash.com/photo-1455390582262-044cdead277a?w=500&h=300&fit=crop"
-                alt="Artículo"
-                width={500}
-                height={300}
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-102"
-              />
+              {articleItems.map((item, index) => (
+                <div 
+                  key={index}
+                  className={`absolute inset-0 transition-opacity duration-1000 ${index === currentArticle ? 'opacity-100' : 'opacity-0'}`}
+                >
+                  <Image
+                    src={item.image}
+                    alt={item.title}
+                    width={500}
+                    height={300}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-102"
+                  />
+                </div>
+              ))}
             </div>
 
             {/* Content */}
-            <div className="p-5 flex-grow flex flex-col justify-between">
-              <div className="space-y-2">
-                <h3 className="font-serif font-bold text-base text-brand-navy leading-snug">
-                  Liderazgo consciente: la clave para equipos comprometidos y organizaciones sostenibles
-                </h3>
-                <p className="text-xs text-gray-400 font-medium">
-                  Mayo 2024
-                </p>
+            <div className="p-5 flex-grow flex flex-col justify-between relative overflow-hidden">
+              <div className="relative h-24">
+                {articleItems.map((item, index) => (
+                  <div 
+                    key={index}
+                    className={`absolute inset-0 transition-opacity duration-500 space-y-2 ${index === currentArticle ? 'opacity-100 pointer-events-auto z-10' : 'opacity-0 pointer-events-none z-0'}`}
+                  >
+                    <h3 className="font-serif font-bold text-base text-brand-navy leading-snug line-clamp-3">
+                      {item.title}
+                    </h3>
+                    <p className="text-xs text-gray-400 font-medium">
+                      {item.date}
+                    </p>
+                  </div>
+                ))}
               </div>
-              <div className="pt-4 flex flex-col gap-4">
+              <div className="pt-4 flex flex-col gap-4 mt-auto z-10 bg-white">
                 <a
                   href="#"
                   className="text-xs font-semibold text-brand-navy hover:text-brand-gold transition-colors duration-300 inline-flex items-center gap-1"
@@ -159,14 +236,16 @@ export default function Featured() {
                   Leer más <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>
                 </a>
                 
-                {/* Dots indicator - 5 dots, 1st is gold */}
+                {/* Dots indicator */}
                 <div className="flex justify-center gap-1.5 pt-2">
-                  {[0, 1, 2, 3, 4].map((dot) => (
-                    <div
-                      key={dot}
+                  {articleItems.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setCurrentArticle(index)}
                       className={`h-1.5 rounded-full transition-all duration-300 ${
-                        dot === 0 ? 'w-4 bg-brand-gold' : 'w-1.5 bg-gray-200'
+                        index === currentArticle ? 'w-4 bg-brand-gold' : 'w-1.5 bg-gray-200 hover:bg-gray-300'
                       }`}
+                      aria-label={`Go to slide ${index + 1}`}
                     />
                   ))}
                 </div>
@@ -244,23 +323,6 @@ export default function Featured() {
           </div>
         </div>
       </div>
-
-      <style jsx>{`
-        @keyframes fadeIn {
-          from {
-            opacity: 0;
-            transform: translateY(20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        .animate-fadeIn {
-          animation: fadeIn 0.8s ease-out forwards;
-        }
-      `}</style>
     </section>
   )
 }

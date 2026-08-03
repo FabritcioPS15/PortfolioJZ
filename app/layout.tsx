@@ -1,18 +1,18 @@
 import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
-import { DM_Serif_Display, DM_Sans } from 'next/font/google'
+import { Playfair_Display, Poppins } from 'next/font/google'
 import './globals.css'
 
-const dmSerifDisplay = DM_Serif_Display({
+const playfairDisplay = Playfair_Display({
   subsets: ['latin'],
   variable: '--font-serif',
-  weight: ['400']
+  weight: ['400', '700']
 })
 
-const dmSans = DM_Sans({
+const poppins = Poppins({
   subsets: ['latin'],
   variable: '--font-sans',
-  weight: ['300', '400', '500', '600', '700']
+  weight: ['400', '500', '600', '700']
 })
 
 export const metadata: Metadata = {
@@ -21,21 +21,13 @@ export const metadata: Metadata = {
   generator: 'v0.app',
   icons: {
     icon: [
-      {
-        url: '/icon-light-32x32.png',
-        media: '(prefers-color-scheme: light)',
-      },
-      {
-        url: '/icon-dark-32x32.png',
-        media: '(prefers-color-scheme: dark)',
-      },
-      {
-        url: '/icon.svg',
-        type: 'image/svg+xml',
-      },
+      { url: '/favicon.ico' },
+      { url: '/favicon-96x96.png', sizes: '96x96', type: 'image/png' },
+      { url: '/favicon.svg', type: 'image/svg+xml' },
     ],
-    apple: '/apple-icon.png',
+    apple: '/apple-touch-icon.png',
   },
+  manifest: '/site.webmanifest',
 }
 
 export const viewport: Viewport = {
@@ -51,7 +43,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="es" className={`${dmSerifDisplay.variable} ${dmSans.variable}`}>
+    <html lang="es" className={`${playfairDisplay.variable} ${poppins.variable}`}>
       <body className="antialiased font-sans bg-white text-foreground">
         {children}
         {process.env.NODE_ENV === 'production' && <Analytics />}

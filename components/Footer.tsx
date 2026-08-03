@@ -1,6 +1,7 @@
 'use client'
 
 import { Mail, ArrowUp } from 'lucide-react'
+import Image from 'next/image'
 
 export default function Footer() {
   const scrollToTop = () => {
@@ -19,9 +20,9 @@ export default function Footer() {
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
 
           {/* Left: Logo and Copyright */}
-          <div className="flex items-center gap-4">
-            <span className="text-brand-gold font-serif font-bold text-3xl">JZ</span>
-            <div className="text-[11px] text-gray-400 leading-tight">
+          <div className="flex flex-col items-center md:items-start gap-4">
+            <Image src="/images/JLZlogo.svg" alt="José Luis Zelada" width={120} height={32} className="h-8 w-auto" />
+            <div className="text-[11px] text-gray-400 leading-tight text-center md:text-left">
               <p>© 2025 José Luis Zelada</p>
               <p>Todos los derechos reservados.</p>
             </div>
