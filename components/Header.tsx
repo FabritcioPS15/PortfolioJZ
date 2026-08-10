@@ -43,9 +43,8 @@ export default function Header() {
   const navItems = [
     { label: 'INICIO', target: 'top' },
     { label: 'SOBRE MÍ', target: 'inicio' },
-    { label: 'CONSULTORÍAS', target: 'consultorías' },
-    { label: 'INVESTIGACIONES DESTACADAS', href: '/investigaciones' },
-    { label: 'ARTÍCULOS RECIENTES', href: '/articulos' },
+    { label: 'INVESTIGACIONES', href: '/investigaciones' },
+    { label: 'ARTÍCULOS', href: '/articulos' },
     { label: 'PUBLICACIONES', href: '/publicaciones' },
   ] as const
 

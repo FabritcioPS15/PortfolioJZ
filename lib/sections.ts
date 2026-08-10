@@ -25,6 +25,7 @@ export interface Section {
   type: SectionType
   link?: string
   order: number
+  isVisible: boolean
   items: SectionItem[]
 }
 
@@ -65,6 +66,7 @@ export function defaultSection(order: number): Section {
     type: 'carousel',
     link: '/publicaciones',
     order,
+    isVisible: true,
     items: [
       {
         id: newId(),
@@ -82,67 +84,13 @@ export function defaultSection(order: number): Section {
 
 export const defaultSections: Section[] = [
   {
-    id: 'default-consultorias',
-    title: 'CONSULTORÍAS',
-    icon: 'briefcase',
-    type: 'carousel',
-    link: '/consultorias',
-    order: 1,
-    items: [
-      {
-        id: 'default-cons-1',
-        title: 'Gestión del Talento Humano',
-        meta: 'Consultoría',
-        category: 'Consultoría',
-        author: 'José Luis Zelada',
-        date: '2024-01-10T00:00:00.000Z',
-        tags: ['Talento', 'RRHH', 'Estrategia'],
-        image:
-          'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=500&h=300&fit=crop',
-        description:
-          'Diseño e implemento estrategias para atraer, desarrollar y retener el talento que impulsa los resultados.',
-        content:
-          'Acompaño a las organizaciones en el diseño e implementación de estrategias para atraer, desarrollar y retener el talento que impulsa los resultados.\n\nRealizamos diagnósticos del ciclo de vida del colaborador, desde el reclutamiento hasta la desvinculación, identificando oportunidades de mejora en cada etapa.\n\nDiseñamos programas de desarrollo, planes de carrera y sistemas de reconocimiento alineados con la estrategia del negocio.\n\nEl resultado es una gestión del talento integral que conecta a las personas con los objetivos organizacionales.',
-      },
-      {
-        id: 'default-cons-2',
-        title: 'Desarrollo Organizacional',
-        meta: 'Consultoría',
-        category: 'Consultoría',
-        author: 'José Luis Zelada',
-        date: '2024-01-10T00:00:00.000Z',
-        tags: ['Cultura', 'Procesos', 'Estructura'],
-        image:
-          'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=500&h=300&fit=crop',
-        description:
-          'Fortalezco la cultura, los procesos y la estructura organizacional para lograr equipos más ágiles y efectivos.',
-        content:
-          'Fortalezco la cultura, los procesos y la estructura organizacional para lograr equipos más ágiles y efectivos.\n\nTrabajamos en conjunto con los líderes para diagnosticar la cultura actual y definir la cultura deseada, construyendo hojas de ruta accionables.\n\nRediseñamos procesos y estructuras para eliminar fricciones y potenciar la colaboración entre áreas.\n\nEl enfoque está en generar organizaciones capaces de adaptarse con rapidez a los cambios del entorno.',
-      },
-      {
-        id: 'default-cons-3',
-        title: 'Consultoría Estratégica',
-        meta: 'Consultoría',
-        category: 'Consultoría',
-        author: 'José Luis Zelada',
-        date: '2024-01-10T00:00:00.000Z',
-        tags: ['Estrategia', 'Liderazgo', 'Decisiones'],
-        image:
-          'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=500&h=300&fit=crop',
-        description:
-          'Acompaño a líderes y organizaciones en la toma de decisiones y en la ejecución de estrategias de alto impacto.',
-        content:
-          'Acompaño a líderes y organizaciones en la toma de decisiones y en la ejecución de estrategias de alto impacto.\n\nAnalizamos el contexto, el modelo de negocio y las capacidades internas para definir prioridades estratégicas claras.\n\nFacilitamos talleres de planeamiento, sesiones de alineamiento y acompañamiento a la alta dirección.\n\nAcompañamos la implementación hasta obtener resultados medibles y sostenibles en el tiempo.',
-      },
-    ],
-  },
-  {
     id: 'default-investigaciones',
     title: 'INVESTIGACIONES',
     icon: 'search',
     type: 'carousel',
     link: '/investigaciones',
-    order: 2,
+    order: 1,
+    isVisible: true,
     items: [
       {
         id: 'default-inv-1',
@@ -198,7 +146,8 @@ export const defaultSections: Section[] = [
     icon: 'book-open',
     type: 'carousel',
     link: '/articulos',
-    order: 3,
+    order: 2,
+    isVisible: true,
     items: [
       {
         id: 'default-art-1',
@@ -248,6 +197,32 @@ export const defaultSections: Section[] = [
       },
     ],
   },
+  {
+    id: 'default-publicaciones',
+    title: 'PUBLICACIONES',
+    icon: 'book-open',
+    type: 'book',
+    link: '/publicaciones',
+    order: 3,
+    isVisible: true,
+    items: [
+      {
+        id: 'default-pub-1',
+        title: 'Comunica, Lidera, Impacta',
+        meta: 'José Luis Zelada',
+        category: 'Libro',
+        author: 'José Luis Zelada',
+        date: '2025-01-15T00:00:00.000Z',
+        tags: ['Comunicación', 'Liderazgo', 'Impacto'],
+        image:
+          'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=500&h=600&fit=crop',
+        description:
+          'Una guía práctica para comunicar con claridad, liderar con propósito y dejar una huella real en tu equipo y organización.',
+        content:
+          'En "Comunica, Lidera, Impacta" comparto el método con el que acompaño a líderes y equipos a transformar su comunicación y su liderazgo.\n\nComunicar con claridad es la puerta de entrada: aprender a transmitir ideas que conecten con las personas y generen acción.\n\nLiderar con propósito implica conocerse a uno mismo, inspirar confianza y construir equipos comprometidos con una causa compartida.\n\nImpactar es el resultado natural cuando la comunicación y el liderazgo se alinean con valores auténticos.\n\nEste libro es para quienes quieren dejar de ser un jefe más y convertirse en líderes que transforman organizaciones y personas.',
+      },
+    ],
+  },
 ]
 
 export function normalizeSection(row: Record<string, unknown> | null | undefined): Section | null {
@@ -255,31 +230,31 @@ export function normalizeSection(row: Record<string, unknown> | null | undefined
 
   const items = Array.isArray(row.items)
     ? (row.items as unknown[]).map((it) => {
-        const item = (it ?? {}) as Record<string, unknown>
-        return {
-          id: typeof item.id === 'string' && item.id ? item.id : newId(),
-          title: typeof item.title === 'string' ? item.title : '',
-          meta: typeof item.meta === 'string' ? item.meta : '',
-          description:
-            typeof item.description === 'string' ? item.description : undefined,
-          image: typeof item.image === 'string' && item.image ? item.image : undefined,
-          link: typeof item.link === 'string' && item.link ? item.link : undefined,
-          category:
-            typeof item.category === 'string' && item.category ? item.category : undefined,
-          author:
-            typeof item.author === 'string' && item.author ? item.author : undefined,
-          date: typeof item.date === 'string' && item.date ? item.date : undefined,
-          tags:
-            Array.isArray(item.tags) &&
+      const item = (it ?? {}) as Record<string, unknown>
+      return {
+        id: typeof item.id === 'string' && item.id ? item.id : newId(),
+        title: typeof item.title === 'string' ? item.title : '',
+        meta: typeof item.meta === 'string' ? item.meta : '',
+        description:
+          typeof item.description === 'string' ? item.description : undefined,
+        image: typeof item.image === 'string' && item.image ? item.image : undefined,
+        link: typeof item.link === 'string' && item.link ? item.link : undefined,
+        category:
+          typeof item.category === 'string' && item.category ? item.category : undefined,
+        author:
+          typeof item.author === 'string' && item.author ? item.author : undefined,
+        date: typeof item.date === 'string' && item.date ? item.date : undefined,
+        tags:
+          Array.isArray(item.tags) &&
             item.tags.every((t) => typeof t === 'string')
-              ? item.tags
-              : undefined,
-          content:
-            typeof item.content === 'string' && item.content ? item.content : undefined,
-          featured:
-            typeof item.featured === 'boolean' ? item.featured : undefined,
-        } satisfies SectionItem
-      })
+            ? item.tags
+            : undefined,
+        content:
+          typeof item.content === 'string' && item.content ? item.content : undefined,
+        featured:
+          typeof item.featured === 'boolean' ? item.featured : undefined,
+      } satisfies SectionItem
+    })
     : []
 
   const type = row.type === 'book' ? 'book' : 'carousel'
@@ -295,6 +270,7 @@ export function normalizeSection(row: Record<string, unknown> | null | undefined
     type,
     link: typeof row.link === 'string' && row.link ? row.link : '/publicaciones',
     order: typeof row.order === 'number' ? row.order : 0,
+    isVisible: typeof row.isVisible === 'boolean' ? row.isVisible : true,
     items,
   }
 }
@@ -313,6 +289,7 @@ export async function getSections(): Promise<Section[]> {
   return data
     .map(normalizeSection)
     .filter((s): s is Section => s !== null)
+    .filter((s) => s.isVisible !== false)
 }
 
 export async function getSectionByLink(link: string): Promise<Section | null> {

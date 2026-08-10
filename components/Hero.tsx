@@ -99,10 +99,10 @@ export default function Hero() {
                 <span>CONOCE MÁS</span>
               </button>
               <button 
-                onClick={() => document.getElementById('consultorías')?.scrollIntoView({ behavior: 'smooth' })}
+                onClick={() => document.getElementById('proyectos')?.scrollIntoView({ behavior: 'smooth' })}
                 className="w-full sm:w-auto flex items-center justify-center gap-2 border border-gray-200 text-brand-navy px-6 py-3 sm:px-8 sm:py-4 rounded font-bold text-[11px] sm:text-xs tracking-[0.1em] transition-all duration-300 hover:border-brand-navy hover:bg-gray-50 hover:shadow-md hover:-translate-y-1 active:translate-y-0 group"
               >
-                <span>MIS CONSULTORÍAS</span>
+                <span>MIS PUBLICACIONES</span>
                 <ArrowRight size={16} className="text-brand-navy group-hover:translate-x-1 transition-transform duration-300" />
               </button>
             </div>
