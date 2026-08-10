@@ -2,6 +2,7 @@
 
 import { useRef, useState } from 'react'
 import { Trash2, ImagePlus, Loader2, Star, X } from 'lucide-react'
+import toast from 'react-hot-toast'
 import type { SectionItem, SectionType } from '@/lib/sections'
 
 export default function ItemEditor({
@@ -37,11 +38,14 @@ export default function ItemEditor({
       const data = await res.json().catch(() => ({}))
       if (!res.ok || !data.url) {
         setUploadError(data.error || 'No se pudo subir la imagen')
+        toast.error(data.error || 'No se pudo subir la imagen')
         return
       }
       onChange({ image: data.url })
+      toast.success('Imagen subida correctamente')
     } catch {
       setUploadError('Error de conexión al subir la imagen')
+      toast.error('Error de conexión al subir la imagen')
     } finally {
       setUploading(false)
     }

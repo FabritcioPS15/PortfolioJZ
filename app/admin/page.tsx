@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import Link from 'next/link'
+import toast, { Toaster } from 'react-hot-toast'
 import {
   Plus,
   Trash2,
@@ -30,7 +31,6 @@ import SectionBookCard from '@/components/SectionBookCard'
 import ItemEditor from '@/components/ItemEditor'
 
 type Status = 'loading' | 'login' | 'ready'
-type Toast = { type: 'ok' | 'error'; text: string } | null
 
 const ICON_OPTIONS: { value: SectionIcon; label: string }[] = [
   { value: 'briefcase', label: 'Maletín (consultorías)' },
@@ -46,11 +46,10 @@ export default function AdminPage() {
   const [sections, setSections] = useState<Section[]>([])
   const [dirtyIds, setDirtyIds] = useState<Set<string>>(new Set())
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set())
-  const [toast, setToast] = useState<Toast>(null)
 
   const notify = useCallback((type: 'ok' | 'error', text: string) => {
-    setToast({ type, text })
-    window.setTimeout(() => setToast(null), 4000)
+    if (type === 'ok') toast.success(text)
+    else toast.error(text)
   }, [])
 
   const loadSections = useCallback(async () => {
@@ -322,15 +321,11 @@ export default function AdminPage() {
           >
             {busy ? 'Ingresando...' : 'Entrar'}
           </button>
-          {toast && (
-            <p className={`text-xs text-center ${toast.type === 'error' ? 'text-red-500' : 'text-green-600'}`}>
-              {toast.text}
-            </p>
-          )}
           <Link href="/" className="block text-center text-xs text-gray-400 hover:text-brand-gold transition-colors">
             ← Volver al inicio
           </Link>
         </form>
+        <Toaster position="top-center" toastOptions={{ style: { fontSize: '13px' } }} />
       </div>
     )
   }
@@ -403,17 +398,20 @@ export default function AdminPage() {
         </div>
 
         {/* Toast */}
-        {toast && (
-          <div
-            className={`px-4 py-3 rounded-lg text-sm font-semibold ${
-              toast.type === 'ok'
-                ? 'bg-green-50 text-green-700 border border-green-200'
-                : 'bg-red-50 text-red-600 border border-red-200'
-            }`}
-          >
-            {toast.text}
-          </div>
-        )}
+        <Toaster
+          position="top-right"
+          toastOptions={{
+            style: { fontSize: '13px', fontWeight: 600 },
+            success: {
+              iconTheme: { primary: '#B08D2E', secondary: '#fff' },
+              style: { background: '#F0FDF4', color: '#15803D', border: '1px solid #BBF7D0' },
+            },
+            error: {
+              iconTheme: { primary: '#DC2626', secondary: '#fff' },
+              style: { background: '#FEF2F2', color: '#B91C1C', border: '1px solid #FECACA' },
+            },
+          }}
+        />
 
         {/* Sections */}
         {sections.length === 0 ? (

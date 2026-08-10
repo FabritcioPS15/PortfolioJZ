@@ -3,11 +3,15 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { usePathname, useRouter } from 'next/navigation'
 import { Menu, X, ArrowRight, Mail } from 'lucide-react'
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
+  const pathname = usePathname()
+  const router = useRouter()
+  const isHome = pathname === '/'
 
   useEffect(() => {
     const handleScroll = () => {
@@ -40,16 +44,24 @@ export default function Header() {
     { label: 'INICIO', target: 'top' },
     { label: 'SOBRE MÍ', target: 'inicio' },
     { label: 'CONSULTORÍAS', target: 'consultorías' },
+    { label: 'INVESTIGACIONES DESTACADAS', href: '/investigaciones' },
+    { label: 'ARTÍCULOS RECIENTES', href: '/articulos' },
     { label: 'PUBLICACIONES', href: '/publicaciones' },
   ] as const
 
-  const scrollToSection = (target: string) => {
-    if (target === 'top') {
-      window.scrollTo({ top: 0, behavior: 'smooth' })
-    } else {
-      document.getElementById(target)?.scrollIntoView({ behavior: 'smooth' })
-    }
+  const handleNavClick = (target: string) => {
     setIsMobileMenuOpen(false)
+    if (isHome) {
+      if (target === 'top') {
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+      } else {
+        document.getElementById(target)?.scrollIntoView({ behavior: 'smooth' })
+      }
+    } else if (target === 'top') {
+      router.push('/')
+    } else {
+      router.push(`/#${target}`)
+    }
   }
 
   return (
@@ -77,9 +89,9 @@ export default function Header() {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-8">
+          <nav className="hidden lg:flex items-center gap-5">
             {navItems.map((item, index) => {
-              const itemClassName = `text-sm font-semibold tracking-wider transition-all duration-300 relative pb-2 ${
+              const itemClassName = `text-[13px] font-semibold tracking-wider transition-all duration-300 relative pb-2 ${
                 index === 0 ? 'text-brand-navy' : 'text-brand-navy hover:text-brand-gold'
               } group`
               const underline = index === 0 ? (
@@ -95,7 +107,7 @@ export default function Header() {
               ) : (
                 <button
                   key={item.label}
-                  onClick={() => scrollToSection(item.target)}
+                  onClick={() => handleNavClick(item.target)}
                   className={itemClassName}
                 >
                   {item.label}
@@ -110,7 +122,7 @@ export default function Header() {
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             aria-label={isMobileMenuOpen ? 'Cerrar menú' : 'Abrir menú'}
             aria-expanded={isMobileMenuOpen}
-            className={`md:hidden p-2.5 rounded-lg text-brand-navy transition-all duration-300 hover:text-brand-gold active:scale-95 ${isMobileMenuOpen ? 'bg-brand-navy/5' : ''
+            className={`lg:hidden p-2.5 rounded-lg text-brand-navy transition-all duration-300 hover:text-brand-gold active:scale-95 ${isMobileMenuOpen ? 'bg-brand-navy/5' : ''
               }`}
           >
             {isMobileMenuOpen ? <X size={26} strokeWidth={2.5} /> : <Menu size={26} strokeWidth={2.5} />}
@@ -122,13 +134,13 @@ export default function Header() {
       <div
         onClick={() => setIsMobileMenuOpen(false)}
         aria-hidden="true"
-        className={`fixed inset-0 top-20 bg-brand-navy/40 backdrop-blur-sm md:hidden transition-opacity duration-300 ${isMobileMenuOpen ? 'opacity-100' : 'pointer-events-none opacity-0'
+        className={`fixed inset-0 top-20 bg-brand-navy/40 backdrop-blur-sm lg:hidden transition-opacity duration-300 ${isMobileMenuOpen ? 'opacity-100' : 'pointer-events-none opacity-0'
           }`}
       ></div>
 
       {/* Mobile Navigation Panel */}
       <div
-        className={`md:hidden fixed inset-x-0 top-20 z-40 px-4 pt-2 transition-all duration-300 ease-out ${isMobileMenuOpen ? 'translate-y-0 opacity-100' : '-translate-y-3 pointer-events-none opacity-0'
+        className={`lg:hidden fixed inset-x-0 top-20 z-40 px-4 pt-2 transition-all duration-300 ease-out ${isMobileMenuOpen ? 'translate-y-0 opacity-100' : '-translate-y-3 pointer-events-none opacity-0'
           }`}
       >
         <nav className="rounded-2xl bg-white shadow-2xl border border-gray-100 overflow-hidden">
@@ -165,7 +177,7 @@ export default function Header() {
               ) : (
                 <button
                   key={item.label}
-                  onClick={() => scrollToSection(item.target)}
+                  onClick={() => handleNavClick(item.target)}
                   className={itemClassName}
                 >
                   {inner}
