@@ -36,7 +36,7 @@ import ItemEditor from '@/components/ItemEditor'
 type Status = 'loading' | 'login' | 'ready'
 
 const ICON_OPTIONS: { value: SectionIcon; label: string }[] = [
-  { value: 'briefcase', label: 'Maletín (consultorías)' },
+  { value: 'briefcase', label: 'Maletín (servicios)' },
   { value: 'search', label: 'Lupa (búsqueda)' },
   { value: 'book-open', label: 'Libro abierto' },
   { value: 'pen-tool', label: 'Pluma' },
@@ -45,6 +45,7 @@ const ICON_OPTIONS: { value: SectionIcon; label: string }[] = [
 export default function AdminPage() {
   const [status, setStatus] = useState<Status>('loading')
   const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const [busy, setBusy] = useState(false)
   const [sections, setSections] = useState<Section[]>([])
   const [dirtyIds, setDirtyIds] = useState<Set<string>>(new Set())
@@ -281,14 +282,24 @@ export default function AdminPage() {
             <label className="text-[11px] font-bold text-brand-navy tracking-wider uppercase">
               Contraseña
             </label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              autoFocus
-              className="w-full px-4 py-2.5 rounded-lg border border-gray-200 text-sm text-brand-navy focus:outline-none focus:ring-2 focus:ring-brand-gold/40"
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                autoFocus
+                className="w-full px-4 py-2.5 rounded-lg border border-gray-200 text-sm text-brand-navy focus:outline-none focus:ring-2 focus:ring-brand-gold/40 pr-10"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-brand-navy transition-colors"
+                title={showPassword ? 'Ocultar contraseña' : 'Ver contraseña'}
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
           </div>
           <button
             type="submit"
