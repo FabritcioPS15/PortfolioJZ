@@ -13,7 +13,7 @@ import {
 } from 'lucide-react'
 import BookCover from './BookCover'
 import { readingTime } from '@/lib/readingTime'
-import type { Section, SectionItem } from '@/lib/sections'
+import { itemHref, type Section, type SectionItem } from '@/lib/sections'
 
 const CONTACT_MAIL = 'mailto:contacto@joseluiszelada.pe'
 
@@ -138,7 +138,7 @@ function Breadcrumbs({ title, section }: { title: string; section: Section }) {
   )
 }
 
-function Related({ related }: { related: SectionItem[] }) {
+function Related({ related, section }: { related: SectionItem[]; section: Section }) {
   if (!related || related.length === 0) return null
   return (
     <div className="mt-14">
@@ -152,7 +152,7 @@ function Related({ related }: { related: SectionItem[] }) {
         {related.map((rel) => (
           <Link
             key={rel.id}
-            href={`/publicaciones/${rel.id}`}
+            href={itemHref(rel, section)}
             className="group relative flex flex-col bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 border border-gray-100 hover:border-brand-gold/40"
           >
             <span className="absolute top-0 inset-x-0 h-[3px] bg-gradient-to-r from-transparent via-brand-gold to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"></span>
@@ -272,7 +272,7 @@ function ArticleLayout({
             )}
           </article>
 
-          <Related related={related} />
+          <Related related={related} section={section} />
 
           <div className="mt-10 text-center">
             <Link
@@ -424,7 +424,7 @@ function BookLayout({
             <Tags tags={item.tags} />
           </article>
 
-          <Related related={related} />
+          <Related related={related} section={section} />
 
           <div className="mt-10 text-center">
             <Link

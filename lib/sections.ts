@@ -43,9 +43,16 @@ export function parseTags(value: string): string[] {
 }
 
 // Prioridad de destino de un ítem:
-// 1) Página propia si tiene contenido, 2) enlace externo del ítem, 3) enlace de la sección.
+// 1) Página propia si tiene contenido (con la URL de su sección),
+// 2) enlace externo del ítem, 3) enlace de la sección.
 export function itemHref(item: SectionItem, section: Section): string {
-  if (item.content && item.content.trim()) return `/publicaciones/${item.id}`
+  if (item.content && item.content.trim()) {
+    const base =
+      section.link && section.link.startsWith('/')
+        ? section.link.replace(/\/+$/, '')
+        : '/publicaciones'
+    return `${base}/${item.id}`
+  }
   if (item.link) return item.link
   return section.link || '/publicaciones'
 }
@@ -306,4 +313,20 @@ export async function getSections(): Promise<Section[]> {
   return data
     .map(normalizeSection)
     .filter((s): s is Section => s !== null)
+}
+
+export async function getSectionByLink(link: string): Promise<Section | null> {
+  const sections = await getSections()
+  return sections.find((s) => s.link === link) ?? null
+}
+
+export async function getSectionItem(
+  link: string,
+  id: string
+): Promise<{ item: SectionItem; section: Section } | null> {
+  const section = await getSectionByLink(link)
+  if (!section) return null
+  const item = section.items.find((it) => it.id === id)
+  if (!item) return null
+  return { item, section }
 }

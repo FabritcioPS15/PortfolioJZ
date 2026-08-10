@@ -199,17 +199,7 @@ export default function AdminPage() {
       const res = await fetch(`/api/sections/${section.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...section,
-          items: section.items.map((it) => ({
-            id: it.id || newId(),
-            title: it.title,
-            meta: it.meta,
-            description: it.description,
-            image: it.image,
-            link: it.link,
-          })),
-        }),
+        body: JSON.stringify(section),
       })
       const data = await res.json().catch(() => ({}))
       if (!res.ok) {
