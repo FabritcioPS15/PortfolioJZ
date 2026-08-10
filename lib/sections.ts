@@ -1,6 +1,6 @@
 import { supabase } from './supabase'
 
-export type SectionIcon = 'search' | 'book-open' | 'pen-tool'
+export type SectionIcon = 'search' | 'book-open' | 'pen-tool' | 'briefcase'
 export type SectionType = 'carousel' | 'book'
 
 export interface SectionItem {
@@ -75,12 +75,67 @@ export function defaultSection(order: number): Section {
 
 export const defaultSections: Section[] = [
   {
+    id: 'default-consultorias',
+    title: 'CONSULTORÍAS',
+    icon: 'briefcase',
+    type: 'carousel',
+    link: '/consultorias',
+    order: 1,
+    items: [
+      {
+        id: 'default-cons-1',
+        title: 'Gestión del Talento Humano',
+        meta: 'Consultoría',
+        category: 'Consultoría',
+        author: 'José Luis Zelada',
+        date: '2024-01-10T00:00:00.000Z',
+        tags: ['Talento', 'RRHH', 'Estrategia'],
+        image:
+          'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=500&h=300&fit=crop',
+        description:
+          'Diseño e implemento estrategias para atraer, desarrollar y retener el talento que impulsa los resultados.',
+        content:
+          'Acompaño a las organizaciones en el diseño e implementación de estrategias para atraer, desarrollar y retener el talento que impulsa los resultados.\n\nRealizamos diagnósticos del ciclo de vida del colaborador, desde el reclutamiento hasta la desvinculación, identificando oportunidades de mejora en cada etapa.\n\nDiseñamos programas de desarrollo, planes de carrera y sistemas de reconocimiento alineados con la estrategia del negocio.\n\nEl resultado es una gestión del talento integral que conecta a las personas con los objetivos organizacionales.',
+      },
+      {
+        id: 'default-cons-2',
+        title: 'Desarrollo Organizacional',
+        meta: 'Consultoría',
+        category: 'Consultoría',
+        author: 'José Luis Zelada',
+        date: '2024-01-10T00:00:00.000Z',
+        tags: ['Cultura', 'Procesos', 'Estructura'],
+        image:
+          'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=500&h=300&fit=crop',
+        description:
+          'Fortalezco la cultura, los procesos y la estructura organizacional para lograr equipos más ágiles y efectivos.',
+        content:
+          'Fortalezco la cultura, los procesos y la estructura organizacional para lograr equipos más ágiles y efectivos.\n\nTrabajamos en conjunto con los líderes para diagnosticar la cultura actual y definir la cultura deseada, construyendo hojas de ruta accionables.\n\nRediseñamos procesos y estructuras para eliminar fricciones y potenciar la colaboración entre áreas.\n\nEl enfoque está en generar organizaciones capaces de adaptarse con rapidez a los cambios del entorno.',
+      },
+      {
+        id: 'default-cons-3',
+        title: 'Consultoría Estratégica',
+        meta: 'Consultoría',
+        category: 'Consultoría',
+        author: 'José Luis Zelada',
+        date: '2024-01-10T00:00:00.000Z',
+        tags: ['Estrategia', 'Liderazgo', 'Decisiones'],
+        image:
+          'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=500&h=300&fit=crop',
+        description:
+          'Acompaño a líderes y organizaciones en la toma de decisiones y en la ejecución de estrategias de alto impacto.',
+        content:
+          'Acompaño a líderes y organizaciones en la toma de decisiones y en la ejecución de estrategias de alto impacto.\n\nAnalizamos el contexto, el modelo de negocio y las capacidades internas para definir prioridades estratégicas claras.\n\nFacilitamos talleres de planeamiento, sesiones de alineamiento y acompañamiento a la alta dirección.\n\nAcompañamos la implementación hasta obtener resultados medibles y sostenibles en el tiempo.',
+      },
+    ],
+  },
+  {
     id: 'default-investigaciones',
-    title: 'INVESTIGACIONES DESTACADAS',
+    title: 'INVESTIGACIONES',
     icon: 'search',
     type: 'carousel',
-    link: '/publicaciones',
-    order: 1,
+    link: '/investigaciones',
+    order: 2,
     items: [
       {
         id: 'default-inv-1',
@@ -132,11 +187,11 @@ export const defaultSections: Section[] = [
   },
   {
     id: 'default-articulos',
-    title: 'ARTÍCULOS RECIENTES',
+    title: 'ARTÍCULOS',
     icon: 'book-open',
     type: 'carousel',
-    link: '/publicaciones',
-    order: 2,
+    link: '/articulos',
+    order: 3,
     items: [
       {
         id: 'default-art-1',
@@ -186,31 +241,6 @@ export const defaultSections: Section[] = [
       },
     ],
   },
-  {
-    id: 'default-publicacion',
-    title: 'PUBLICACIÓN DESTACADA',
-    icon: 'pen-tool',
-    type: 'book',
-    link: '/publicaciones',
-    order: 3,
-    items: [
-      {
-        id: 'default-pub-1',
-        title: 'Comunica, Lidera, Impacta',
-        meta: 'J. L. ZELADA',
-        category: 'Libro',
-        author: 'José Luis Zelada',
-        date: '2022-06-01T00:00:00.000Z',
-        featured: true,
-        tags: ['Comunicación', 'Liderazgo', 'Influencia'],
-        description:
-          'Estrategias prácticas para desarrollar liderazgo, comunicación efectiva e influencia positiva.',
-        link: 'mailto:contacto@joseluiszelada.pe',
-        content:
-          'Comunica, Lidera, Impacta es un libro pensado para profesionales y líderes que desean transformar su manera de comunicar y liderar. A través de estrategias prácticas, el lector aprende a desarrollar su presencia e influencia.\n\nEl libro se organiza en tres grandes pilares. Comunicar: cómo transmitir ideas con claridad y generar conexión. Liderar: cómo inspirar confianza y compromiso en los equipos. Impactar: cómo dejar una huella positiva y sostenible en la organización y la sociedad.\n\nCada capítulo combina teoría aplicada con ejercicios y casos reales, permitiendo al lector poner en práctica lo aprendido de inmediato.\n\nUna obra ideal para quienes buscan resultados concretos en su desarrollo personal y profesional.',
-      },
-    ],
-  },
 ]
 
 export function normalizeSection(row: Record<string, unknown> | null | undefined): Section | null {
@@ -247,7 +277,9 @@ export function normalizeSection(row: Record<string, unknown> | null | undefined
 
   const type = row.type === 'book' ? 'book' : 'carousel'
   const icon: SectionIcon =
-    row.icon === 'book-open' || row.icon === 'pen-tool' ? row.icon : 'search'
+    row.icon === 'book-open' || row.icon === 'pen-tool' || row.icon === 'briefcase'
+      ? row.icon
+      : 'search'
 
   return {
     id: typeof row.id === 'string' ? row.id : newId(),

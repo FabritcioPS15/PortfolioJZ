@@ -33,6 +33,7 @@ type Status = 'loading' | 'login' | 'ready'
 type Toast = { type: 'ok' | 'error'; text: string } | null
 
 const ICON_OPTIONS: { value: SectionIcon; label: string }[] = [
+  { value: 'briefcase', label: 'Maletín (consultorías)' },
   { value: 'search', label: 'Lupa (búsqueda)' },
   { value: 'book-open', label: 'Libro abierto' },
   { value: 'pen-tool', label: 'Pluma' },
@@ -255,7 +256,7 @@ export default function AdminPage() {
   const restoreDefaults = async () => {
     if (
       !window.confirm(
-        'Esto reemplazará tus secciones actuales con las de ejemplo (INVESTIGACIONES DESTACADAS, ARTÍCULOS RECIENTES y PUBLICACIÓN DESTACADA). ¿Continuar?'
+        'Esto reemplazará tus secciones actuales con las de ejemplo (CONSULTORÍAS, INVESTIGACIONES y ARTÍCULOS). ¿Continuar?'
       )
     )
       return
@@ -501,7 +502,7 @@ export default function AdminPage() {
                           <input
                             value={section.title}
                             onChange={(e) => patchSection(section.id, { title: e.target.value })}
-                            placeholder="Ej: INVESTIGACIONES DESTACADAS"
+                            placeholder="Ej: INVESTIGACIONES"
                             className="w-full px-4 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-gold/40"
                           />
                         </div>

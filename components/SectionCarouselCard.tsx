@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Search, BookOpen, PenTool, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Search, BookOpen, PenTool, Briefcase, ChevronLeft, ChevronRight } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { itemHref, type Section } from '@/lib/sections'
@@ -10,6 +10,7 @@ export const SECTION_ICONS = {
   search: Search,
   'book-open': BookOpen,
   'pen-tool': PenTool,
+  briefcase: Briefcase,
 } as const
 
 export function SectionIcon({ icon, size = 16 }: { icon: keyof typeof SECTION_ICONS; size?: number }) {

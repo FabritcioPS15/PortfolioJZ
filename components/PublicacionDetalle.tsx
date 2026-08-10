@@ -122,15 +122,15 @@ function MetaBadges({ item }: { item: SectionItem }) {
   )
 }
 
-function Breadcrumbs({ title }: { title: string }) {
+function Breadcrumbs({ title, section }: { title: string; section: Section }) {
   return (
     <nav className="flex items-center gap-1.5 text-[11px] text-gray-400 font-medium mb-5 flex-wrap">
       <Link href="/" className="hover:text-brand-gold transition-colors">
         Inicio
       </Link>
       <ChevronRight size={11} />
-      <Link href="/publicaciones" className="hover:text-brand-gold transition-colors">
-        Publicaciones
+      <Link href={section.link || '/publicaciones'} className="hover:text-brand-gold transition-colors">
+        {section.title}
       </Link>
       <ChevronRight size={11} />
       <span className="text-brand-navy font-semibold truncate max-w-[260px]">{title}</span>
@@ -195,6 +195,7 @@ function Related({ related }: { related: SectionItem[] }) {
 /* ------------------------- Diseño de artículo ------------------------- */
 function ArticleLayout({
   item,
+  section,
   related,
 }: {
   item: SectionItem
@@ -207,7 +208,7 @@ function ArticleLayout({
         <div className="absolute top-0 right-0 -mr-20 -mt-20 w-[500px] h-[500px] bg-brand-gold/5 rounded-full blur-3xl pointer-events-none"></div>
         <div className="absolute bottom-0 left-0 -ml-32 -mb-32 w-[420px] h-[420px] bg-brand-navy/5 rounded-full blur-3xl pointer-events-none"></div>
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <Breadcrumbs title={item.title} />
+          <Breadcrumbs title={item.title} section={section} />
           <div className="mb-4">
             <MetaBadges item={item} />
           </div>
@@ -275,10 +276,10 @@ function ArticleLayout({
 
           <div className="mt-10 text-center">
             <Link
-              href="/publicaciones"
+              href={section.link || '/publicaciones'}
               className="inline-flex items-center gap-2 text-xs font-semibold text-brand-navy hover:text-brand-gold transition-colors"
             >
-              <ArrowLeft size={14} /> Ver todas las publicaciones
+              <ArrowLeft size={14} /> Ver más {section.title.toLowerCase()}
             </Link>
           </div>
         </div>
@@ -309,7 +310,7 @@ function BookLayout({
         <div className="absolute top-0 right-0 -mr-20 -mt-20 w-[500px] h-[500px] bg-brand-gold/5 rounded-full blur-3xl pointer-events-none"></div>
         <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-[400px] h-[400px] bg-brand-navy/5 rounded-full blur-3xl pointer-events-none"></div>
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <Breadcrumbs title={item.title} />
+          <Breadcrumbs title={item.title} section={section} />
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center mt-4">
             {/* Portada */}
@@ -388,10 +389,10 @@ function BookLayout({
                   <BookOpen size={15} className="text-brand-gold" /> Solicitar ejemplar
                 </a>
                 <Link
-                  href="/publicaciones"
+                  href={section.link || '/publicaciones'}
                   className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-lg border border-gray-200 text-brand-navy text-xs font-bold tracking-wider uppercase hover:border-brand-navy hover:bg-gray-50 transition-colors"
                 >
-                  <ArrowLeft size={14} /> Ver publicaciones
+                  <ArrowLeft size={14} /> Ver {section.title.toLowerCase()}
                 </Link>
               </div>
             </div>
@@ -427,10 +428,10 @@ function BookLayout({
 
           <div className="mt-10 text-center">
             <Link
-              href="/publicaciones"
+              href={section.link || '/publicaciones'}
               className="inline-flex items-center gap-2 text-xs font-semibold text-brand-navy hover:text-brand-gold transition-colors"
             >
-              <ArrowLeft size={14} /> Ver todas las publicaciones
+              <ArrowLeft size={14} /> Ver más {section.title.toLowerCase()}
             </Link>
           </div>
         </div>

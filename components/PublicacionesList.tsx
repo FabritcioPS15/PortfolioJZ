@@ -12,7 +12,7 @@ import { readingTime } from '@/lib/readingTime'
 
 const CONTACT_MAIL = 'mailto:contacto@joseluiszelada.pe'
 
-const CATEGORIES = ['Todo', 'Investigación', 'Artículo', 'Libro']
+const CATEGORIES = ['Todo', 'Consultoría', 'Investigación', 'Artículo', 'Libro']
 
 function normalize(s: string) {
   return s
