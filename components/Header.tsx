@@ -40,9 +40,8 @@ export default function Header() {
     { label: 'INICIO', target: 'top' },
     { label: 'SOBRE MÍ', target: 'inicio' },
     { label: 'CONSULTORÍAS', target: 'consultorías' },
-    { label: 'INVESTIGACIONES', target: 'proyectos' },
-    { label: 'ARTÍCULOS', target: 'proyectos' },
-  ]
+    { label: 'PUBLICACIONES', href: '/publicaciones' },
+  ] as const
 
   const scrollToSection = (target: string) => {
     if (target === 'top') {
@@ -64,7 +63,7 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
-          <Link href="#" className="flex items-center gap-3 flex-shrink-0 group">
+          <Link href="/" className="flex items-center gap-3 flex-shrink-0 group">
             <Image src="/images/LogoJLZ.png" alt="Logo" width={150} height={40} className="h-10 w-auto transition-transform duration-300 group-hover:scale-105" style={{ width: 'auto' }} priority />
             <div className="h-6 sm:h-8 w-px bg-brand-gold opacity-70"></div>
             <div className="transition-all duration-300">
@@ -79,23 +78,31 @@ export default function Header() {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-8">
-            {navItems.map((item, index) => (
-              <button
-                key={item.label}
-                onClick={() => scrollToSection(item.target)}
-                className={`text-sm font-semibold tracking-wider transition-all duration-300 relative pb-2 ${index === 0
-                  ? 'text-brand-navy'
-                  : 'text-brand-navy hover:text-brand-gold'
-                  } group`}
-              >
-                {item.label}
-                {index === 0 ? (
-                  <span className="absolute bottom-0 left-1/4 w-1/2 h-0.5 bg-brand-gold transition-all duration-300"></span>
-                ) : (
-                  <span className="absolute bottom-0 left-1/2 w-0 h-0.5 bg-brand-gold group-hover:w-1/2 group-hover:left-1/4 transition-all duration-300"></span>
-                )}
-              </button>
-            ))}
+            {navItems.map((item, index) => {
+              const itemClassName = `text-sm font-semibold tracking-wider transition-all duration-300 relative pb-2 ${
+                index === 0 ? 'text-brand-navy' : 'text-brand-navy hover:text-brand-gold'
+              } group`
+              const underline = index === 0 ? (
+                <span className="absolute bottom-0 left-1/4 w-1/2 h-0.5 bg-brand-gold transition-all duration-300"></span>
+              ) : (
+                <span className="absolute bottom-0 left-1/2 w-0 h-0.5 bg-brand-gold group-hover:w-1/2 group-hover:left-1/4 transition-all duration-300"></span>
+              )
+              return 'href' in item ? (
+                <Link key={item.label} href={item.href} className={itemClassName}>
+                  {item.label}
+                  {underline}
+                </Link>
+              ) : (
+                <button
+                  key={item.label}
+                  onClick={() => scrollToSection(item.target)}
+                  className={itemClassName}
+                >
+                  {item.label}
+                  {underline}
+                </button>
+              )
+            })}
           </nav>
 
           {/* Mobile Menu Button */}
@@ -132,21 +139,39 @@ export default function Header() {
           </div>
 
           <div className="max-h-[calc(100dvh-9rem)] overflow-y-auto">
-            {navItems.map((item, idx) => (
-              <button
-                key={item.label}
-                onClick={() => scrollToSection(item.target)}
-                className="group flex w-full items-center justify-between px-5 py-4 text-left text-sm font-semibold tracking-wider text-brand-navy transition-colors duration-200 hover:bg-cream hover:text-brand-gold border-b border-gray-100 last:border-b-0 active:bg-cream"
-              >
-                <span className="flex items-center gap-4">
-                  <span className="flex h-6 w-6 items-center justify-center rounded-md bg-brand-navy/5 text-[10px] font-bold text-brand-gold group-hover:bg-brand-navy group-hover:text-white transition-colors duration-200">
-                    {String(idx + 1).padStart(2, '0')}
+            {navItems.map((item, idx) => {
+              const inner = (
+                <>
+                  <span className="flex items-center gap-4">
+                    <span className="flex h-6 w-6 items-center justify-center rounded-md bg-brand-navy/5 text-[10px] font-bold text-brand-gold group-hover:bg-brand-navy group-hover:text-white transition-colors duration-200">
+                      {String(idx + 1).padStart(2, '0')}
+                    </span>
+                    {item.label}
                   </span>
-                  {item.label}
-                </span>
-                <ArrowRight size={16} className="text-gray-300 transition-transform duration-200 group-hover:translate-x-1 group-hover:text-brand-gold" />
-              </button>
-            ))}
+                  <ArrowRight size={16} className="text-gray-300 transition-transform duration-200 group-hover:translate-x-1 group-hover:text-brand-gold" />
+                </>
+              )
+              const itemClassName =
+                'group flex w-full items-center justify-between px-5 py-4 text-left text-sm font-semibold tracking-wider text-brand-navy transition-colors duration-200 hover:bg-cream hover:text-brand-gold border-b border-gray-100 last:border-b-0 active:bg-cream'
+              return 'href' in item ? (
+                <Link
+                  key={item.label}
+                  href={item.href}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className={itemClassName}
+                >
+                  {inner}
+                </Link>
+              ) : (
+                <button
+                  key={item.label}
+                  onClick={() => scrollToSection(item.target)}
+                  className={itemClassName}
+                >
+                  {inner}
+                </button>
+              )
+            })}
           </div>
 
           <a

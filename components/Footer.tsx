@@ -23,7 +23,7 @@ export default function Footer() {
           <div className="flex flex-col items-center md:items-start gap-4">
             <Image src="/images/JLZlogo.png" alt="José Luis Zelada" width={120} height={32} className="h-8 w-auto" style={{ width: 'auto' }} />
             <div className="text-[11px] text-gray-400 leading-tight text-center md:text-left">
-              <p>© 2025 José Luis Zelada</p>
+              <p>© {new Date().getFullYear()} José Luis Zelada</p>
               <p>Todos los derechos reservados.</p>
             </div>
           </div>
@@ -53,12 +53,18 @@ export default function Footer() {
 
           {/* Right: Legal & Scroll to Top */}
           <div className="flex items-center gap-6">
-            <div className="flex items-center gap-3 text-[11px] text-gray-400">
-              <a href="#" className="hover:text-brand-gold transition-colors duration-300">
+            <div className="flex flex-col items-center gap-1.5 sm:flex-row sm:gap-3 text-[11px] text-gray-400">
+              <a
+                href="/politica-de-privacidad"
+                className="hover:text-brand-gold transition-colors duration-300"
+              >
                 Política de Privacidad
               </a>
-              <span className="text-gray-600">|</span>
-              <a href="#" className="hover:text-brand-gold transition-colors duration-300">
+              <span className="hidden sm:inline text-gray-600">|</span>
+              <a
+                href="/terminos-y-condiciones"
+                className="hover:text-brand-gold transition-colors duration-300"
+              >
                 Términos y Condiciones
               </a>
             </div>
