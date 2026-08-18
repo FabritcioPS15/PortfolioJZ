@@ -11,7 +11,7 @@ function toRow(section: Section) {
     type: section.type,
     link: section.link || '/publicaciones',
     order: section.order,
-    isVisible: section.isVisible,
+    is_visible: section.isVisible,
     items: section.items,
   }
 }
