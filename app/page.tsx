@@ -6,8 +6,8 @@ import Featured from '@/components/Featured'
 import Footer from '@/components/Footer'
 import ScrollToTop from '@/components/ScrollToTop'
 
-// Render dinámico: siempre lee las secciones más recientes de Supabase
-export const dynamic = 'force-dynamic'
+// Revalida cada 60s y se refresca al instante al guardar desde el editor (/api/sections)
+export const revalidate = 60
 
 export default function Page() {
   return (

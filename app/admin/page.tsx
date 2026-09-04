@@ -7,6 +7,7 @@ import {
   Plus,
   Trash2,
   Save,
+  SaveAll,
   Eye,
   EyeOff,
   LogOut,
@@ -19,6 +20,7 @@ import {
   Layers,
   FilePlus2,
   BookOpen,
+  Copy,
   Image as ImageIcon,
 } from 'lucide-react'
 import {
@@ -217,11 +219,15 @@ export default function AdminPage() {
         notify('error', data.error || 'No se pudo guardar la sección')
         return
       }
+      if (data.section) {
+        setSections((prev) => prev.map((s) => (s.id === section.id ? data.section : s)))
+      }
       setDirtyIds((prev) => {
         const next = new Set(prev)
         next.delete(section.id)
         return next
       })
+      setExpandedItemId(null)
       notify('ok', 'Sección guardada correctamente')
     } catch {
       notify('error', 'Error de conexión al guardar')

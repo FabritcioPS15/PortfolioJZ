@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { revalidatePath } from 'next/cache'
 import { isAuthenticated } from '@/lib/auth'
 import { supabaseAdmin } from '@/lib/supabase'
 import { supabaseHasVisibleColumn } from '@/lib/dbSchema'
@@ -54,6 +55,8 @@ export async function PUT(request: Request, { params }: Params) {
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 
+  await revalidatePath('/', 'layout')
+
   return NextResponse.json({ section: normalizeSection(data) })
 }
 
@@ -72,6 +75,8 @@ export async function DELETE(request: Request, { params }: Params) {
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
+
+  await revalidatePath('/', 'layout')
 
   return NextResponse.json({ ok: true })
 }

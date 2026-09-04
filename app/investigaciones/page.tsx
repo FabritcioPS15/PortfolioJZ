@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import SectionPage from '@/components/SectionPage'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 60
 
 export const metadata: Metadata = {
   title: 'Investigaciones | José Luis Zelada',

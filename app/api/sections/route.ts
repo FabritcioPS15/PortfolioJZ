@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { revalidatePath } from 'next/cache'
 import { isAuthenticated } from '@/lib/auth'
 import { supabaseAdmin } from '@/lib/supabase'
 import { supabaseHasVisibleColumn } from '@/lib/dbSchema'
@@ -66,6 +67,8 @@ export async function POST(request: Request) {
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
+
+  await revalidatePath('/', 'layout')
 
   return NextResponse.json({ section: normalizeSection(data) }, { status: 201 })
 }

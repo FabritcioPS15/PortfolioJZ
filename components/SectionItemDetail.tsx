@@ -12,7 +12,10 @@ export default async function SectionItemDetail({
   const found = await getSectionItem(sectionLink, itemId)
   if (!found) notFound()
 
-  const related = found.section.items.filter((it) => it.id !== itemId).slice(0, 3)
+  const related = found.section.items
+    .filter((it) => it.id !== itemId)
+    .slice(0, 3)
+    .map(({ content, ...rest }) => rest)
 
   return <PublicacionDetalle item={found.item} section={found.section} related={related} />
 }
