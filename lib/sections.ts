@@ -323,5 +323,25 @@ export async function getSectionItem(
   if (!section) return null
   const item = section.items.find((it) => it.id === id)
   if (!item) return null
-  return { item, section }
+
+  // Payload mínimo al cliente: la página de detalle solo usa título/enlace/tipo de la
+  // sección; los "relacionados" se limitan a 3 y sin el contenido pesado.
+  const stripContent = (it: SectionItem): SectionItem => {
+    const { content, ...rest } = it
+    return rest
+  }
+
+  return {
+    item,
+    section: {
+      id: section.id,
+      title: section.title,
+      icon: section.icon,
+      type: section.type,
+      link: section.link,
+      order: section.order,
+      isVisible: true,
+      items: section.items.filter((it) => it.id !== id).slice(0, 3).map(stripContent),
+    },
+  }
 }

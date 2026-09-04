@@ -253,7 +253,14 @@ function ArticleLayout({
               </blockquote>
             )}
             {item.content ? (
-              <Paragraphs content={item.content} dropCap />
+              /<[a-z][\s\S]*>/i.test(item.content) ? (
+                <div
+                  className="prose prose-sm md:prose-base prose-brand max-w-none prose-headings:font-serif prose-p:text-gray-600 prose-a:text-brand-gold prose-a:no-underline hover:prose-a:underline"
+                  dangerouslySetInnerHTML={{ __html: item.content }}
+                />
+              ) : (
+                <Paragraphs content={item.content} dropCap />
+              )
             ) : (
               <p className="text-sm text-gray-600">Esta publicación aún no tiene contenido.</p>
             )}
@@ -415,7 +422,14 @@ function BookLayout({
 
           <article className="bg-white rounded-2xl border border-gray-100 shadow-sm px-6 py-8 md:px-10 md:py-12">
             {item.content ? (
-              <Paragraphs content={item.content} dropCap />
+              /<[a-z][\s\S]*>/i.test(item.content) ? (
+                <div
+                  className="prose prose-sm md:prose-base prose-brand max-w-none prose-headings:font-serif prose-p:text-gray-600 prose-a:text-brand-gold prose-a:no-underline hover:prose-a:underline"
+                  dangerouslySetInnerHTML={{ __html: item.content }}
+                />
+              ) : (
+                <Paragraphs content={item.content} dropCap />
+              )
             ) : (
               <p className="text-sm text-gray-600">
                 Próximamente más información sobre este libro.

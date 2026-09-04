@@ -4,6 +4,7 @@ import { useRef, useState } from 'react'
 import { Trash2, ImagePlus, Loader2, Star, X } from 'lucide-react'
 import toast from 'react-hot-toast'
 import type { SectionItem, SectionType } from '@/lib/sections'
+import RichTextEditor from './RichTextEditor'
 
 export default function ItemEditor({
   item,
@@ -11,18 +12,22 @@ export default function ItemEditor({
   sectionType,
   onChange,
   onRemove,
+  autoFocus = false,
 }: {
   item: SectionItem
   index: number
   sectionType: SectionType
   onChange: (patch: Partial<SectionItem>) => void
   onRemove: () => void
+  autoFocus?: boolean
 }) {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [uploading, setUploading] = useState(false)
   const [uploadError, setUploadError] = useState<string | null>(null)
 
   const tagsString = (item.tags ?? []).join(', ')
+  const words = (item.content || '').trim() ? item.content!.trim().split(/\s+/).length : 0
+  const minutes = Math.max(1, Math.round(words / 200))
 
   const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -83,6 +88,7 @@ export default function ItemEditor({
             value={item.title}
             onChange={(e) => onChange({ title: e.target.value })}
             placeholder="Título del artículo / publicación"
+            autoFocus={autoFocus}
             className="w-full px-3 py-2 rounded-md border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-gold/40"
           />
         </div>
@@ -204,16 +210,14 @@ export default function ItemEditor({
         <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">
           Contenido completo (cuerpo del artículo)
         </label>
-        <textarea
+        <RichTextEditor
           value={item.content || ''}
-          onChange={(e) => onChange({ content: e.target.value })}
-          rows={8}
-          placeholder="Escribe aquí el artículo completo. Separa los párrafos con una línea en blanco."
-          className="w-full px-3 py-2 rounded-md border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-gold/40 resize-y leading-relaxed"
+          onChange={(html) => onChange({ content: html })}
         />
-        <p className="text-[10px] text-gray-400">
-          Si incluyes contenido, se habilitará una página propia para el artículo
-          (/publicaciones/...). El enlace de redirección tiene prioridad si lo indicas.
+        <p className="text-[10px] text-gray-500">
+          {words > 0
+            ? `${words.toLocaleString('es')} palabras · ~${minutes} min de lectura`
+            : 'Sin contenido todavía. Si incluyes contenido, se habilitará una página propia para el artículo.'}
         </p>
       </div>
 

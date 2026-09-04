@@ -34,6 +34,21 @@ import {
 import SectionCarouselCard from '@/components/SectionCarouselCard'
 import SectionBookCard from '@/components/SectionBookCard'
 import ItemEditor from '@/components/ItemEditor'
+import SortableItem from '@/components/SortableItem'
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core'
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable'
 
 type Status = 'loading' | 'login' | 'ready'
 
@@ -53,6 +68,31 @@ export default function AdminPage() {
   const [dirtyIds, setDirtyIds] = useState<Set<string>>(new Set())
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [expandedItemId, setExpandedItemId] = useState<string | null>(null)
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  )
+
+  const handleDragEnd = (event: any) => {
+    const { active, over } = event
+    if (over && active.id !== over.id) {
+      setSections((prev) =>
+        prev.map((s) => {
+          if (s.id !== selectedId) return s
+          const oldIndex = s.items.findIndex((it) => it.id === active.id)
+          const newIndex = s.items.findIndex((it) => it.id === over.id)
+          return {
+            ...s,
+            items: arrayMove(s.items, oldIndex, newIndex),
+          }
+        })
+      )
+      if (selectedId) markDirty(selectedId)
+    }
+  }
 
   const notify = useCallback((type: 'ok' | 'error', text: string) => {
     if (type === 'ok') toast.success(text)
@@ -166,12 +206,59 @@ export default function AdminPage() {
   }
 
   const addItem = (sectionId: string) => {
-    const item: SectionItem = { id: newId(), title: '', meta: '', image: '' }
+    const section = sections.find((s) => s.id === sectionId)
+    const last = section?.items[section.items.length - 1]
+    const item: SectionItem = {
+      id: newId(),
+      title: '',
+      meta: '',
+      image: '',
+      // Reutiliza categoría y autor del último ítem para acelerar la creación
+      category: last?.category,
+      author: last?.author,
+    }
     setSections((prev) =>
       prev.map((s) => (s.id === sectionId ? { ...s, items: [...s.items, item] } : s))
     )
     markDirty(sectionId)
     setExpandedItemId(item.id)
+  }
+
+  const moveItem = (sectionId: string, itemId: string, dir: -1 | 1) => {
+    setSections((prev) =>
+      prev.map((s) => {
+        if (s.id !== sectionId) return s
+        const idx = s.items.findIndex((it) => it.id === itemId)
+        const target = idx + dir
+        if (idx < 0 || target < 0 || target >= s.items.length) return s
+        const next = [...s.items]
+        const [item] = next.splice(idx, 1)
+        next.splice(target, 0, item)
+        return { ...s, items: next }
+      })
+    )
+    markDirty(sectionId)
+  }
+
+  const duplicateItem = (sectionId: string, itemId: string) => {
+    const copyId = newId()
+    setSections((prev) =>
+      prev.map((s) => {
+        if (s.id !== sectionId) return s
+        const idx = s.items.findIndex((it) => it.id === itemId)
+        if (idx < 0) return s
+        const source = s.items[idx]
+        const items = [...s.items]
+        items.splice(idx + 1, 0, {
+          ...source,
+          id: copyId,
+          title: source.title ? `${source.title} (copia)` : '',
+        })
+        return { ...s, items }
+      })
+    )
+    markDirty(sectionId)
+    setExpandedItemId(copyId)
   }
 
   const removeItem = (sectionId: string, itemId: string) => {
@@ -235,6 +322,57 @@ export default function AdminPage() {
       setBusy(false)
     }
   }
+
+  // Guarda todas las secciones con cambios pendientes, una por una.
+  const saveAllSections = async () => {
+    const dirty = sections.filter((s) => dirtyIds.has(s.id))
+    if (dirty.length === 0) return
+    setBusy(true)
+    let okCount = 0
+    const errors: string[] = []
+    for (const section of dirty) {
+      try {
+        const res = await fetch(`/api/sections/${section.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(section),
+        })
+        if (res.ok) {
+          okCount++
+        } else {
+          const data = await res.json().catch(() => ({}))
+          errors.push(data.error || 'Error al guardar')
+        }
+      } catch {
+        errors.push('Error de conexión')
+      }
+    }
+    setDirtyIds((prev) => {
+      const next = new Set(prev)
+      dirty.forEach((s) => next.delete(s.id))
+      return next
+    })
+    setBusy(false)
+    if (errors.length === 0) {
+      notify('ok', `Guardado: ${okCount} ${okCount === 1 ? 'sección' : 'secciones'}`)
+    } else {
+      notify('error', `${okCount} guardadas, ${errors.length} con error. Revisa y vuelve a guardar.`)
+    }
+  }
+
+  // Atajo de teclado: Ctrl/Cmd+S guarda los cambios pendientes.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
+        e.preventDefault()
+        if (status !== 'ready' || busy) return
+        if (dirtyIds.size > 0) void saveAllSections()
+        else if (selectedSection) void saveSection(selectedSection)
+      }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  })
 
   const deleteSection = async (section: Section) => {
     if (!window.confirm(`¿Eliminar la sección "${section.title}"? Esta acción no se puede deshacer.`))
@@ -350,9 +488,19 @@ export default function AdminPage() {
           </div>
           <div className="flex items-center gap-2">
             {dirtyIds.size > 0 && (
-              <span className="hidden lg:inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-amber-400/15 border border-amber-400/30 text-amber-300 text-[10px] font-bold uppercase tracking-wider">
-                {dirtyIds.size} {dirtyIds.size === 1 ? 'sección' : 'secciones'} sin guardar
-              </span>
+              <>
+                <span className="hidden lg:inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-amber-400/15 border border-amber-400/30 text-amber-300 text-[10px] font-bold uppercase tracking-wider">
+                  {dirtyIds.size} {dirtyIds.size === 1 ? 'sección' : 'secciones'} sin guardar
+                </span>
+                <button
+                  onClick={() => void saveAllSections()}
+                  disabled={busy}
+                  title="Guarda todos los cambios pendientes (Ctrl+S)"
+                  className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-emerald-500 text-white text-xs font-bold hover:bg-emerald-600 transition-colors disabled:opacity-50"
+                >
+                  <SaveAll size={14} /> Guardar todo
+                </button>
+              </>
             )}
             <Link
               href="/"
@@ -687,78 +835,126 @@ export default function AdminPage() {
                       </p>
                     )}
 
-                    {selectedSection.items.map((item, itemIndex) => {
-                      const isExpanded = expandedItemId === item.id
-                      return (
-                        <div
-                          key={item.id}
-                          className={`border rounded-xl overflow-hidden transition-all duration-200 ${
-                            isExpanded
-                              ? 'border-brand-gold/50 shadow-sm'
-                              : 'border-gray-200 hover:border-brand-gold/30'
-                          }`}
-                        >
-                          {/* Fila compacta: imagen principal + nombre */}
-                          <div
-                            onClick={() => setExpandedItemId(isExpanded ? null : item.id)}
-                            className="w-full flex items-center gap-3 px-3 py-2.5 cursor-pointer bg-white hover:bg-cream/40 transition-colors"
-                          >
-                            <span className="w-14 h-11 rounded-lg overflow-hidden flex-shrink-0 bg-gray-100 flex items-center justify-center border border-gray-100">
-                              {item.image ? (
-                                // eslint-disable-next-line @next/next/no-img-element
-                                <img
-                                  src={item.image}
-                                  alt={item.title || 'Imagen principal'}
-                                  className="w-full h-full object-cover"
-                                />
-                              ) : (
-                                <ImageIcon size={16} className="text-gray-300" />
-                              )}
-                            </span>
-                            <span className="flex-1 min-w-0">
-                              <span className="block text-sm font-bold text-brand-navy truncate">
-                                {item.title || `Publicación ${itemIndex + 1} (sin título)`}
-                              </span>
-                              <span className="block text-[11px] text-gray-400 truncate">
-                                {item.category || 'Sin categoría'}
-                                {item.meta ? ` · ${item.meta}` : ''}
-                              </span>
-                            </span>
-                            <span className="flex items-center gap-2 flex-shrink-0">
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation()
-                                  removeItem(selectedSection.id, item.id)
-                                }}
-                                aria-label="Eliminar ítem"
-                                className="p-1.5 rounded-md text-gray-300 hover:text-red-500 hover:bg-red-50 transition-colors"
-                              >
-                                <Trash2 size={14} />
-                              </button>
-                              <ChevronDown
-                                size={16}
-                                className={`text-gray-400 transition-transform duration-200 ${
-                                  isExpanded ? 'rotate-180 text-brand-gold' : ''
+                    <DndContext
+                      sensors={sensors}
+                      collisionDetection={closestCenter}
+                      onDragEnd={handleDragEnd}
+                    >
+                      <SortableContext
+                        items={selectedSection.items.map((item) => item.id)}
+                        strategy={verticalListSortingStrategy}
+                      >
+                        {selectedSection.items.map((item, itemIndex) => {
+                          const isExpanded = expandedItemId === item.id
+                          return (
+                            <SortableItem key={item.id} id={item.id}>
+                              <div
+                                className={`flex-1 border rounded-xl overflow-hidden transition-all duration-200 ${
+                                  isExpanded
+                                    ? 'border-brand-gold/50 shadow-sm'
+                                    : 'border-gray-200 hover:border-brand-gold/30'
                                 }`}
-                              />
-                            </span>
-                          </div>
+                              >
+                                {/* Fila compacta: imagen principal + nombre */}
+                                <div
+                                  onClick={() => setExpandedItemId(isExpanded ? null : item.id)}
+                                  className="w-full flex items-center gap-3 px-3 py-2.5 cursor-pointer bg-white hover:bg-cream/40 transition-colors"
+                                >
+                                  <span className="w-14 h-11 rounded-lg overflow-hidden flex-shrink-0 bg-gray-100 flex items-center justify-center border border-gray-100">
+                                    {item.image ? (
+                                      // eslint-disable-next-line @next/next/no-img-element
+                                      <img
+                                        src={item.image}
+                                        alt={item.title || 'Imagen principal'}
+                                        className="w-full h-full object-cover"
+                                      />
+                                    ) : (
+                                      <ImageIcon size={16} className="text-gray-300" />
+                                    )}
+                                  </span>
+                                  <span className="flex-1 min-w-0">
+                                    <span className="block text-sm font-bold text-brand-navy truncate">
+                                      {item.title || `Publicación ${itemIndex + 1} (sin título)`}
+                                    </span>
+                                    <span className="block text-[11px] text-gray-400 truncate">
+                                      {item.category || 'Sin categoría'}
+                                      {item.meta ? ` · ${item.meta}` : ''}
+                                    </span>
+                                  </span>
+                                  <span className="flex items-center gap-2 flex-shrink-0">
+                                    <span className="flex flex-col">
+                                      <button
+                                        onClick={(e) => {
+                                          e.stopPropagation()
+                                          moveItem(selectedSection.id, item.id, -1)
+                                        }}
+                                        disabled={itemIndex === 0}
+                                        aria-label="Subir ítem"
+                                        className="p-0.5 text-gray-300 hover:text-brand-navy transition-colors disabled:opacity-25"
+                                      >
+                                        <ArrowUp size={12} />
+                                      </button>
+                                      <button
+                                        onClick={(e) => {
+                                          e.stopPropagation()
+                                          moveItem(selectedSection.id, item.id, 1)
+                                        }}
+                                        disabled={itemIndex === selectedSection.items.length - 1}
+                                        aria-label="Bajar ítem"
+                                        className="p-0.5 text-gray-300 hover:text-brand-navy transition-colors disabled:opacity-25"
+                                      >
+                                        <ArrowDown size={12} />
+                                      </button>
+                                    </span>
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation()
+                                        duplicateItem(selectedSection.id, item.id)
+                                      }}
+                                      aria-label="Duplicar ítem"
+                                      title="Duplicar ítem"
+                                      className="p-1.5 rounded-md text-gray-300 hover:text-brand-navy hover:bg-gray-50 transition-colors"
+                                    >
+                                      <Copy size={14} />
+                                    </button>
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation()
+                                        removeItem(selectedSection.id, item.id)
+                                      }}
+                                      aria-label="Eliminar ítem"
+                                      className="p-1.5 rounded-md text-gray-300 hover:text-red-500 hover:bg-red-50 transition-colors"
+                                    >
+                                      <Trash2 size={14} />
+                                    </button>
+                                    <ChevronDown
+                                      size={16}
+                                      className={`text-gray-400 transition-transform duration-200 ${
+                                        isExpanded ? 'rotate-180 text-brand-gold' : ''
+                                      }`}
+                                    />
+                                  </span>
+                                </div>
 
-                          {/* Editor completo: solo si está seleccionado */}
-                          {isExpanded && (
-                            <div className="border-t border-gray-100 bg-white">
-                              <ItemEditor
-                                item={item}
-                                index={itemIndex}
-                                sectionType={selectedSection.type}
-                                onChange={(patch) => patchItem(selectedSection.id, item.id, patch)}
-                                onRemove={() => removeItem(selectedSection.id, item.id)}
-                              />
-                            </div>
-                          )}
-                        </div>
-                      )
-                    })}
+                                {/* Editor completo: solo si está seleccionado */}
+                                {isExpanded && (
+                                  <div className="border-t border-gray-100 bg-white">
+                                    <ItemEditor
+                                      item={item}
+                                      index={itemIndex}
+                                      sectionType={selectedSection.type}
+                                      onChange={(patch) => patchItem(selectedSection.id, item.id, patch)}
+                                      onRemove={() => removeItem(selectedSection.id, item.id)}
+                                      autoFocus={!item.title && !item.description && !item.category && !item.author}
+                                    />
+                                  </div>
+                                )}
+                              </div>
+                            </SortableItem>
+                          )
+                        })}
+                      </SortableContext>
+                    </DndContext>
                   </div>
 
                   {/* Vista previa */}
