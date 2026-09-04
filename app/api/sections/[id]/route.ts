@@ -1,9 +1,11 @@
 import { NextResponse } from 'next/server'
 import { isAuthenticated } from '@/lib/auth'
 import { supabaseAdmin } from '@/lib/supabase'
+import { supabaseHasVisibleColumn } from '@/lib/dbSchema'
 import { normalizeSection, type Section } from '@/lib/sections'
 
-function toRow(section: Section) {
+async function toRow(section: Section) {
+  const includeVisible = await supabaseHasVisibleColumn()
   return {
     id: section.id,
     title: section.title,
@@ -11,7 +13,7 @@ function toRow(section: Section) {
     type: section.type,
     link: section.link || '/publicaciones',
     order: section.order,
-    isVisible: section.isVisible,
+    ...(includeVisible ? { isVisible: section.isVisible } : {}),
     items: section.items,
   }
 }
@@ -44,7 +46,7 @@ export async function PUT(request: Request, { params }: Params) {
 
   const { data, error } = await supabaseAdmin
     .from('sections')
-    .upsert(toRow(section), { onConflict: 'id' })
+    .upsert(await toRow(section), { onConflict: 'id' })
     .select()
     .single()
 

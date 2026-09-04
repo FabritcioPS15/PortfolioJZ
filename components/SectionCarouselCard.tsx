@@ -29,29 +29,52 @@ export default function SectionCarouselCard({
 }) {
   const items = section.items
   const [current, setCurrent] = useState(0)
+  const [paused, setPaused] = useState(false)
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  // Precarga la imagen del siguiente slide para que el cambio no parpadee.
+  useEffect(() => {
     if (items.length <= 1) return
+    const nextItem = items[(current + 1) % items.length]
+    if (nextItem?.image) {
+      const img = new globalThis.Image()
+      img.src = nextItem.image
+    }
+  }, [items, current])
+
+  useEffect(() => {
+    if (items.length <= 1 || paused) return
     const timer = setInterval(() => {
-      setCurrent((prev) => (prev + 1) % items.length)
+      if (!document.hidden) setCurrent((prev) => (prev + 1) % items.length)
     }, 5000)
     return () => clearInterval(timer)
-  }, [items.length])
+  }, [items.length, paused])
 
   const viewAll = section.link || '/publicaciones'
+
+  const entrance =
+    mounted && isVisible
+      ? {
+          opacity: 0,
+          animationName: 'fadeInUp',
+          animationDuration: '0.6s',
+          animationTimingFunction: 'ease-out',
+          animationFillMode: 'forwards',
+          animationDelay: delay,
+        }
+      : mounted
+        ? { opacity: 0 }
+        : undefined
 
   if (items.length === 0) {
     return (
       <div
         className="flex flex-col bg-white rounded-xl overflow-hidden shadow-sm border border-dashed border-gray-200"
-        style={{
-          animationName: isVisible ? 'fadeInUp' : 'none',
-          animationDuration: '0.6s',
-          animationTimingFunction: 'ease-out',
-          animationFillMode: 'forwards',
-          animationDelay: delay,
-          opacity: 0,
-        }}
+        style={entrance}
       >
         <div className="px-5 py-4 flex items-center justify-between border-b border-gray-100">
           <div className="flex items-center gap-2">
@@ -64,24 +87,21 @@ export default function SectionCarouselCard({
             Ver todas
           </Link>
         </div>
-        <div className="flex-grow flex items-center justify-center p-10 text-xs text-gray-400">
+        <div className="flex-grow flex items-center justify-center p-10 text-xs text-gray-500">
           Sin ítems todavía
         </div>
       </div>
     )
   }
 
+  const prevIndex = (current - 1 + items.length) % items.length
+
   return (
     <div
       className="group flex flex-col bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300"
-      style={{
-        animationName: isVisible ? 'fadeInUp' : 'none',
-        animationDuration: '0.6s',
-        animationTimingFunction: 'ease-out',
-        animationFillMode: 'forwards',
-        animationDelay: delay,
-        opacity: 0,
-      }}
+      style={entrance}
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
     >
       {/* Header bar */}
       <div className="px-5 py-4 flex items-center justify-between border-b border-gray-100">
@@ -99,31 +119,36 @@ export default function SectionCarouselCard({
         </Link>
       </div>
 
-      {/* Image */}
+      {/* Image: solo se monta la imagen del slide actual (y la anterior para el fundido),
+          el resto no descarga recursos */}
       <div className="relative w-full h-44 overflow-hidden bg-gray-100">
-        {items.map((item, index) => (
-          <div
-            key={item.id}
-            className={`absolute inset-0 transition-opacity duration-1000 ${index === current ? 'opacity-100' : 'opacity-0'}`}
-          >
-            {item.image ? (
-              <Image
-                src={item.image}
-                alt={item.title}
-                width={500}
-                height={300}
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-102"
-                priority={index === 0}
-              />
-            ) : (
-              <div className="w-full h-full bg-gradient-to-br from-brand-navy/10 to-brand-gold/10 flex items-center justify-center">
-                <span className="text-xs text-gray-400 font-semibold uppercase tracking-widest">
-                  {section.title}
-                </span>
-              </div>
-            )}
-          </div>
-        ))}
+        {items.map((item, index) => {
+          const needsImage = index === current || (items.length > 1 && index === prevIndex)
+          return (
+            <div
+              key={item.id}
+              className={`absolute inset-0 transition-opacity duration-1000 ${index === current ? 'opacity-100' : 'opacity-0'}`}
+            >
+              {item.image && needsImage ? (
+                <Image
+                  src={item.image}
+                  alt={item.title}
+                  width={500}
+                  height={300}
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  priority={index === 0}
+                  sizes="(max-width: 768px) 100vw, 500px"
+                />
+              ) : (
+                <div className="w-full h-full bg-gradient-to-br from-brand-navy/10 to-brand-gold/10 flex items-center justify-center">
+                  <span className="text-xs text-gray-500 font-semibold uppercase tracking-widest">
+                    {section.title}
+                  </span>
+                </div>
+              )}
+            </div>
+          )
+        })}
       </div>
 
       {/* Content */}
@@ -143,7 +168,7 @@ export default function SectionCarouselCard({
                     {item.category}
                   </span>
                 )}
-                {item.meta && <p className="text-xs text-gray-400 font-medium">{item.meta}</p>}
+                {item.meta && <p className="text-xs text-gray-600 font-medium">{item.meta}</p>}
               </div>
               {item.author && (
                 <p className="text-[11px] text-gray-500 font-medium">Por {item.author}</p>

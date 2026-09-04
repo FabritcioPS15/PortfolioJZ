@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { itemHref, type Section } from '@/lib/sections'
 import { SectionIcon } from './SectionCarouselCard'
@@ -16,18 +17,30 @@ export default function SectionBookCard({
 }) {
   const item = section.items[0]
   const href = item ? itemHref(item, section) : section.link || '/publicaciones'
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  const entrance =
+    mounted && isVisible
+      ? {
+          opacity: 0,
+          animationName: 'fadeInUp',
+          animationDuration: '0.6s',
+          animationTimingFunction: 'ease-out',
+          animationFillMode: 'forwards',
+          animationDelay: delay,
+        }
+      : mounted
+        ? { opacity: 0 }
+        : undefined
 
   return (
     <div
       className="group flex flex-col bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300"
-      style={{
-        animationName: isVisible ? 'fadeInUp' : 'none',
-        animationDuration: '0.6s',
-        animationTimingFunction: 'ease-out',
-        animationFillMode: 'forwards',
-        animationDelay: delay,
-        opacity: 0,
-      }}
+      style={entrance}
     >
       {/* Header bar */}
       <div className="px-5 py-4 flex items-center justify-between border-b border-gray-100">

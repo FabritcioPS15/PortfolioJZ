@@ -5,6 +5,8 @@ import ScrollToTop from '@/components/ScrollToTop'
 import PublicacionesList from '@/components/PublicacionesList'
 import { getSections } from '@/lib/sections'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = {
   title: 'Publicaciones | José Luis Zelada',
   description:

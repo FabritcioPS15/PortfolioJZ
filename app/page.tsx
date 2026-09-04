@@ -6,6 +6,9 @@ import Featured from '@/components/Featured'
 import Footer from '@/components/Footer'
 import ScrollToTop from '@/components/ScrollToTop'
 
+// Render dinámico: siempre lee las secciones más recientes de Supabase
+export const dynamic = 'force-dynamic'
+
 export default function Page() {
   return (
     <main className="min-h-screen bg-white">

@@ -1,6 +1,10 @@
 -- ============================================================
 -- Editor de Secciones - Esquema de Supabase
 -- Ejecuta este script en: Supabase Dashboard > SQL Editor > New query
+--
+-- NOTA: si tu tabla sections ya existe pero NO tiene la columna
+-- is_visible (como en instalaciones previas), agrega la columna con:
+--   alter table public.sections add column if not exists is_visible boolean not null default true;
 -- ============================================================
 
 create extension if not exists pgcrypto;

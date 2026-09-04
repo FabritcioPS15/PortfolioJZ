@@ -53,7 +53,7 @@ export default async function SectionPage({
           {section ? (
             <PublicacionesList sections={[section]} />
           ) : (
-            <div className="text-center py-20 text-sm text-gray-400">
+            <div className="text-center py-20 text-sm text-gray-600">
               Esta sección aún no está disponible. Vuelve pronto.
             </div>
           )}

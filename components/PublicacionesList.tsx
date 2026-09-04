@@ -37,8 +37,13 @@ function matches(item: SectionItem, query: string, category: string) {
 export default function PublicacionesList({ sections }: { sections: Section[] }) {
   const containerRef = useRef<HTMLDivElement>(null)
   const [isVisible, setIsVisible] = useState(false)
+  const [mounted, setMounted] = useState(false)
   const [query, setQuery] = useState('')
   const [category, setCategory] = useState('Todo')
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -60,6 +65,19 @@ export default function PublicacionesList({ sections }: { sections: Section[] })
     return () => observer.disconnect()
   }, [isVisible])
 
+  const entrance = (delay?: string) => {
+    if (!mounted) return undefined
+    if (!isVisible) return { opacity: 0 }
+    return {
+      opacity: 0,
+      animationName: 'fadeInUp',
+      animationDuration: '0.6s',
+      animationTimingFunction: 'ease-out',
+      animationFillMode: 'forwards',
+      animationDelay: delay,
+    }
+  }
+
   const total = useMemo(
     () => sections.reduce((acc, s) => acc + s.items.length, 0),
     [sections]
@@ -67,7 +85,7 @@ export default function PublicacionesList({ sections }: { sections: Section[] })
 
   if (sections.length === 0) {
     return (
-      <div className="text-center py-20 text-sm text-gray-400">
+      <div className="text-center py-20 text-sm text-gray-600">
         Aún no hay publicaciones. Vuelve pronto.
       </div>
     )
@@ -87,13 +105,7 @@ export default function PublicacionesList({ sections }: { sections: Section[] })
       {/* Toolbar: búsqueda + filtros */}
       <div
         className="sticky top-20 z-30 bg-white/90 backdrop-blur-md rounded-2xl border border-gray-100 shadow-sm p-4 md:p-5 flex flex-col lg:flex-row gap-4 lg:items-center lg:justify-between"
-        style={{
-          animationName: isVisible ? 'fadeInUp' : 'none',
-          animationDuration: '0.6s',
-          animationTimingFunction: 'ease-out',
-          animationFillMode: 'forwards',
-          opacity: 0,
-        }}
+        style={entrance()}
       >
         <div className="relative flex-1 max-w-md">
           <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -133,13 +145,13 @@ export default function PublicacionesList({ sections }: { sections: Section[] })
       </div>
 
       {/* Contador de resultados */}
-      <p className="text-xs text-gray-400 font-medium -mt-8">
+      <p className="text-xs text-gray-500 font-medium -mt-8">
         Mostrando {visibleCount} de {total} publicaciones
       </p>
 
       {visibleSections.length === 0 ? (
         <div className="text-center py-16 bg-white rounded-2xl border border-dashed border-gray-200">
-          <p className="text-sm text-gray-400">Sin resultados para tu búsqueda.</p>
+          <p className="text-sm text-gray-600">Sin resultados para tu búsqueda.</p>
           <button
             onClick={() => {
               setQuery('')
@@ -152,20 +164,11 @@ export default function PublicacionesList({ sections }: { sections: Section[] })
         </div>
       ) : (
         visibleSections.map(({ section, items }, sectionIndex) => {
-          const animationDelay = `${0.1 + sectionIndex * 0.1}s`
-
           return (
             <div
               key={section.id}
               className="border-t border-gray-100 pt-10"
-              style={{
-                animationName: isVisible ? 'fadeInUp' : 'none',
-                animationDuration: '0.6s',
-                animationTimingFunction: 'ease-out',
-                animationFillMode: 'forwards',
-                animationDelay,
-                opacity: 0,
-              }}
+              style={entrance(`${0.1 + sectionIndex * 0.1}s`)}
             >
               {/* Section header */}
               <div className="flex items-center gap-3 mb-8">
@@ -176,7 +179,7 @@ export default function PublicacionesList({ sections }: { sections: Section[] })
                   {section.title}
                 </h2>
                 <span className="h-px flex-1 bg-brand-gold/30"></span>
-                <span className="text-[11px] text-gray-400 font-semibold whitespace-nowrap">
+                <span className="text-[11px] text-gray-600 font-semibold whitespace-nowrap">
                   {items.length} {items.length === 1 ? 'publicación' : 'publicaciones'}
                 </span>
               </div>
@@ -241,14 +244,7 @@ export default function PublicacionesList({ sections }: { sections: Section[] })
                       key={item.id}
                       href={itemHref(item, section)}
                       className="group relative flex flex-col bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-gray-100 hover:border-brand-gold/40"
-                      style={{
-                        animationName: isVisible ? 'fadeInUp' : 'none',
-                        animationDuration: '0.6s',
-                        animationTimingFunction: 'ease-out',
-                        animationFillMode: 'forwards',
-                        animationDelay: `${0.1 + sectionIndex * 0.1 + itemIndex * 0.05}s`,
-                        opacity: 0,
-                      }}
+                      style={entrance(`${0.1 + sectionIndex * 0.1 + itemIndex * 0.05}s`)}
                     >
                       {/* Accent superior dorado */}
                       <span className="absolute top-0 inset-x-0 h-[3px] bg-gradient-to-r from-transparent via-brand-gold to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"></span>
@@ -264,7 +260,7 @@ export default function PublicacionesList({ sections }: { sections: Section[] })
                           />
                         ) : (
                           <div className="w-full h-full bg-gradient-to-br from-brand-navy/10 to-brand-gold/10 flex items-center justify-center">
-                            <span className="text-xs text-gray-400 font-semibold uppercase tracking-widest">
+                            <span className="text-xs text-gray-500 font-semibold uppercase tracking-widest">
                               {section.title}
                             </span>
                           </div>
@@ -293,7 +289,7 @@ export default function PublicacionesList({ sections }: { sections: Section[] })
                         )}
 
                         <div className="flex items-center justify-between gap-2 mt-auto pt-3">
-                          <div className="flex items-center gap-3 text-[11px] text-gray-400 min-w-0">
+                          <div className="flex items-center gap-3 text-[11px] text-gray-600 min-w-0">
                             {item.author && (
                               <span className="inline-flex items-center gap-1 truncate">
                                 <User size={12} className="text-brand-gold flex-shrink-0" />
@@ -316,7 +312,7 @@ export default function PublicacionesList({ sections }: { sections: Section[] })
                             {item.tags.slice(0, 3).map((t) => (
                               <span
                                 key={t}
-                                className="px-2 py-0.5 rounded-full bg-gray-50 border border-gray-100 text-[10px] text-gray-400"
+                                className="px-2 py-0.5 rounded-full bg-gray-50 border border-gray-100 text-[10px] text-gray-600"
                               >
                                 #{t}
                               </span>

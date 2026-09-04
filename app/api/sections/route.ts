@@ -1,9 +1,11 @@
 import { NextResponse } from 'next/server'
 import { isAuthenticated } from '@/lib/auth'
 import { supabaseAdmin } from '@/lib/supabase'
+import { supabaseHasVisibleColumn } from '@/lib/dbSchema'
 import { defaultSections, normalizeSection, newId, type Section } from '@/lib/sections'
 
-function toRow(section: Section) {
+async function toRow(section: Section) {
+  const includeVisible = await supabaseHasVisibleColumn()
   return {
     id: section.id,
     title: section.title,
@@ -11,7 +13,7 @@ function toRow(section: Section) {
     type: section.type,
     link: section.link || '/publicaciones',
     order: section.order,
-    isVisible: section.isVisible,
+    ...(includeVisible ? { isVisible: section.isVisible } : {}),
     items: section.items,
   }
 }
@@ -59,7 +61,7 @@ export async function POST(request: Request) {
   }
   if (!body.id) section.id = newId()
 
-  const { data, error } = await supabaseAdmin.from('sections').insert(toRow(section)).select().single()
+  const { data, error } = await supabaseAdmin.from('sections').insert(await toRow(section)).select().single()
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 })

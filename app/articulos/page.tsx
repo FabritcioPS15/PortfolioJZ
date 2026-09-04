@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 import SectionPage from '@/components/SectionPage'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = {
   title: 'Artículos | José Luis Zelada',
   description:

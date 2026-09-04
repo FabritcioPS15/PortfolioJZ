@@ -49,7 +49,7 @@ function Paragraphs({ content, dropCap = false }: { content: string; dropCap?: b
     .filter(Boolean)
 
   if (paragraphs.length === 0) {
-    return <p className="text-sm text-gray-400">Esta publicación aún no tiene contenido.</p>
+    return <p className="text-sm text-gray-600">Esta publicación aún no tiene contenido.</p>
   }
 
   return (
@@ -124,7 +124,7 @@ function MetaBadges({ item }: { item: SectionItem }) {
 
 function Breadcrumbs({ title, section }: { title: string; section: Section }) {
   return (
-    <nav className="flex items-center gap-1.5 text-[11px] text-gray-400 font-medium mb-5 flex-wrap">
+    <nav className="flex items-center gap-1.5 text-[11px] text-gray-600 font-medium mb-5 flex-wrap">
       <Link href="/" className="hover:text-brand-gold transition-colors">
         Inicio
       </Link>
@@ -255,7 +255,7 @@ function ArticleLayout({
             {item.content ? (
               <Paragraphs content={item.content} dropCap />
             ) : (
-              <p className="text-sm text-gray-400">Esta publicación aún no tiene contenido.</p>
+              <p className="text-sm text-gray-600">Esta publicación aún no tiene contenido.</p>
             )}
             <Tags tags={item.tags} />
             {item.link && (
@@ -417,7 +417,7 @@ function BookLayout({
             {item.content ? (
               <Paragraphs content={item.content} dropCap />
             ) : (
-              <p className="text-sm text-gray-400">
+              <p className="text-sm text-gray-600">
                 Próximamente más información sobre este libro.
               </p>
             )}
