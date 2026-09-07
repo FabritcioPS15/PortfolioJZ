@@ -3,7 +3,7 @@ import { revalidatePath } from 'next/cache'
 import { isAuthenticated } from '@/lib/auth'
 import { supabaseAdmin } from '@/lib/supabase'
 import { supabaseHasVisibleColumn } from '@/lib/dbSchema'
-import { defaultSections, normalizeSection, newId, type Section } from '@/lib/sections'
+import { normalizeSection, newId, type Section } from '@/lib/sections'
 
 async function toRow(section: Section) {
   const includeVisible = await supabaseHasVisibleColumn()
@@ -21,7 +21,7 @@ async function toRow(section: Section) {
 
 export async function GET() {
   if (!supabaseAdmin) {
-    return NextResponse.json({ sections: defaultSections })
+    return NextResponse.json({ sections: [] })
   }
 
   const { data, error } = await supabaseAdmin
@@ -30,7 +30,11 @@ export async function GET() {
     .order('order', { ascending: true })
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    return NextResponse.json({ sections: [] })
+  }
+
+  if (!data || data.length === 0) {
+    return NextResponse.json({ sections: [] })
   }
 
   const sections = (data ?? [])

@@ -22,19 +22,24 @@ import {
   BookOpen,
   Copy,
   Image as ImageIcon,
+  Clock,
+  Briefcase,
+  PenTool,
+  Search,
 } from 'lucide-react'
 import {
   defaultSection,
+  itemHref,
   newId,
   type Section,
   type SectionIcon,
   type SectionItem,
-  type SectionType,
 } from '@/lib/sections'
-import SectionCarouselCard from '@/components/SectionCarouselCard'
+import { readingTime } from '@/lib/readingTime'
 import SectionBookCard from '@/components/SectionBookCard'
 import ItemEditor from '@/components/ItemEditor'
 import SortableItem from '@/components/SortableItem'
+import PublicacionCard from '@/components/PublicacionCard'
 import {
   DndContext,
   closestCenter,
@@ -551,10 +556,10 @@ export default function AdminPage() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-bold text-brand-navy tracking-wider uppercase">
-                    Secciones
+                    Categorías de Publicaciones
                   </p>
                   <p className="text-[11px] text-gray-400">
-                    {sections.length} {sections.length === 1 ? 'sección' : 'secciones'}
+                    {sections.length} {sections.length === 1 ? 'categoría' : 'categorías'}
                   </p>
                 </div>
               </div>
@@ -564,7 +569,7 @@ export default function AdminPage() {
                 {sections.length === 0 ? (
                   <div className="text-center py-10 px-4">
                     <FilePlus2 size={28} className="mx-auto text-gray-300 mb-2" />
-                    <p className="text-xs text-gray-400">Aún no hay secciones</p>
+                    <p className="text-xs text-gray-400">Aún no hay categorías</p>
                   </div>
                 ) : (
                   sections.map((section, index) => {
@@ -597,7 +602,7 @@ export default function AdminPage() {
                           </span>
                         <span className="block text-[11px] text-gray-400">
                           {section.type === 'book' ? 'Publicación (libro)' : 'Carrusel'} ·{' '}
-                          {section.items.length} ítem(s)
+                          {section.items.length} publicación(es)
                         </span>
                       </span>
                       <span className="flex items-center gap-1 flex-shrink-0">
@@ -629,7 +634,7 @@ export default function AdminPage() {
                   disabled={busy}
                   className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-brand-navy text-white text-xs font-bold tracking-wider uppercase hover:bg-brand-navy/90 transition-colors disabled:opacity-50"
                 >
-                  <Plus size={14} className="text-brand-gold" /> Añadir sección
+                  <Plus size={14} className="text-brand-gold" /> Añadir categoría
                 </button>
               </div>
             </div>
@@ -640,15 +645,15 @@ export default function AdminPage() {
             {!selectedSection ? (
               <div className="bg-white rounded-2xl border border-dashed border-gray-200 text-center py-24 px-6">
                 <FilePlus2 size={36} className="mx-auto text-gray-300 mb-3" />
-                <p className="text-sm font-bold text-gray-600">Aún no hay secciones</p>
+                <p className="text-sm font-bold text-gray-600">Aún no hay categorías</p>
                 <p className="text-xs text-gray-400 mt-1 mb-5">
-                  Crea la primera sección para empezar a publicar.
+                  Crea la primera categoría para empezar a publicar.
                 </p>
                 <button
                   onClick={addSection}
                   className="px-5 py-3 rounded-lg bg-brand-navy text-white text-xs font-bold tracking-wider uppercase hover:bg-brand-navy/90 transition-colors"
                 >
-                  <Plus size={14} className="inline mr-1 text-brand-gold" /> Añadir primera sección
+                  <Plus size={14} className="inline mr-1 text-brand-gold" /> Añadir primera categoría
                 </button>
               </div>
             ) : (
@@ -657,17 +662,17 @@ export default function AdminPage() {
                 <div className="px-5 py-4 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center gap-3">
                   <div className="flex-1 min-w-0">
                     <h2 className="text-lg md:text-xl font-serif font-bold text-brand-navy truncate">
-                      {selectedSection.title || 'Nueva sección'}
+                      {selectedSection.title || 'Nueva categoría'}
                     </h2>
                     <p className="text-xs text-gray-400">
-                      Editando la sección {selectedIndex + 1} de {sections.length}
+                      Editando la categoría {selectedIndex + 1} de {sections.length}
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => moveSection(selectedSection.id, -1)}
                       disabled={selectedIndex === 0}
-                      aria-label="Subir sección"
+                      aria-label="Subir categoría"
                       className="p-2 rounded-lg border border-gray-200 text-gray-500 hover:text-brand-navy hover:border-brand-gold transition-colors disabled:opacity-30"
                     >
                       <ArrowUp size={15} />
@@ -675,7 +680,7 @@ export default function AdminPage() {
                     <button
                       onClick={() => moveSection(selectedSection.id, 1)}
                       disabled={selectedIndex === sections.length - 1}
-                      aria-label="Bajar sección"
+                      aria-label="Bajar categoría"
                       className="p-2 rounded-lg border border-gray-200 text-gray-500 hover:text-brand-navy hover:border-brand-gold transition-colors disabled:opacity-30"
                     >
                       <ArrowDown size={15} />
@@ -700,138 +705,216 @@ export default function AdminPage() {
                 </div>
 
                 <div className="px-5 py-5 space-y-6">
-                  {/* Datos básicos */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {/* Visibilidad */}
-                    <div className="sm:col-span-2 flex items-center justify-between gap-3 px-4 py-3 rounded-xl bg-gray-50 border border-gray-100">
-                      <div className="flex items-start gap-3 min-w-0">
-                        <span
-                          className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                            selectedSection.isVisible === false
-                              ? 'bg-gray-200 text-gray-500'
-                              : 'bg-brand-gold/15 text-brand-gold'
-                          }`}
-                        >
-                          {selectedSection.isVisible === false ? (
-                            <EyeOff size={15} />
-                          ) : (
-                            <Eye size={15} />
-                          )}
-                        </span>
-                        <div className="min-w-0">
-                          <p className="text-[11px] font-bold text-brand-navy tracking-wider uppercase">
-                            Visible en el sitio
-                          </p>
-                          <p className="text-[11px] text-gray-400 leading-snug">
-                            {selectedSection.isVisible === false
-                              ? 'Oculta: no aparecerá en el sitio público.'
-                              : 'Activa: se muestra en la página de inicio y en su sección.'}
-                          </p>
+                  {/* Datos básicos (Ocultos por defecto) */}
+                  <details className="group bg-gray-50/50 rounded-xl border border-gray-100 overflow-hidden [&_summary::-webkit-details-marker]:hidden">
+                    <summary className="flex items-center justify-between px-5 py-4 cursor-pointer hover:bg-gray-50 transition-colors">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">Configuración de Categoría</span>
+                      </div>
+                      <span className="text-gray-400 group-open:rotate-180 transition-transform duration-200">
+                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2.5 4.5L6 8L9.5 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                      </span>
+                    </summary>
+                    <div className="px-5 pb-5 pt-2 border-t border-gray-100 bg-white">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        {/* Visibilidad */}
+                        <div className="sm:col-span-2 flex items-center justify-between gap-3 px-4 py-3 rounded-xl bg-gray-50 border border-gray-100 mt-2">
+                          <div className="flex items-start gap-3 min-w-0">
+                            <span
+                              className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
+                                selectedSection.isVisible === false
+                                  ? 'bg-gray-200 text-gray-500'
+                                  : 'bg-brand-gold/15 text-brand-gold'
+                              }`}
+                            >
+                              {selectedSection.isVisible === false ? (
+                                <EyeOff size={15} />
+                              ) : (
+                                <Eye size={15} />
+                              )}
+                            </span>
+                            <div className="min-w-0">
+                              <p className="text-[11px] font-bold text-brand-navy tracking-wider uppercase">
+                                Visible en el sitio
+                              </p>
+                              <p className="text-[11px] text-gray-400 leading-snug">
+                                {selectedSection.isVisible === false
+                                  ? 'Oculta: no aparecerá en el sitio público.'
+                                  : 'Activa: se muestra en la página de inicio y en su sección.'}
+                              </p>
+                            </div>
+                          </div>
+                          <button
+                            onClick={() =>
+                              patchSection(selectedSection.id, {
+                                isVisible: selectedSection.isVisible === false,
+                              })
+                            }
+                            aria-label="Alternar visibilidad de la categoría"
+                            className={`relative w-12 h-6 rounded-full transition-colors duration-200 flex-shrink-0 ${
+                              selectedSection.isVisible === false ? 'bg-gray-300' : 'bg-brand-gold'
+                            }`}
+                          >
+                            <span
+                              className={`absolute top-0.5 w-5 h-5 rounded-full bg-white shadow-md transition-all duration-200 ${
+                                selectedSection.isVisible === false ? 'left-0.5' : 'left-[26px]'
+                              }`}
+                            ></span>
+                          </button>
+                        </div>
+                        <div className="sm:col-span-2 space-y-1.5">
+                          <label className="text-[11px] font-bold text-brand-navy tracking-wider uppercase">
+                            Título de la categoría
+                          </label>
+                          <input
+                            value={selectedSection.title}
+                            onChange={(e) =>
+                              patchSection(selectedSection.id, { title: e.target.value })
+                            }
+                            placeholder="Ej: INVESTIGACIONES"
+                            className="w-full px-4 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-gold/40"
+                          />
+                        </div>
+                        <div className="sm:col-span-2 space-y-1.5">
+                          <label className="text-[11px] font-bold text-brand-navy tracking-wider uppercase">
+                            Tipo de tarjeta
+                          </label>
+                          <div className="grid grid-cols-2 gap-3">
+                            {(
+                              [
+                                {
+                                  value: 'carousel' as const,
+                                  label: 'Carrusel',
+                                  desc: 'Varias publicaciones en tarjetas',
+                                  icon: 'layers',
+                                },
+                                {
+                                  value: 'book' as const,
+                                  label: 'Libro destacado',
+                                  desc: 'Una publicación tipo libro',
+                                  icon: 'book',
+                                },
+                              ] as const
+                            ).map((opt) => (
+                              <button
+                                key={opt.value}
+                                type="button"
+                                onClick={() =>
+                                  patchSection(selectedSection.id, { type: opt.value })
+                                }
+                                className={`text-left p-3.5 rounded-xl border-2 transition-all duration-200 ${
+                                  selectedSection.type === opt.value
+                                    ? 'border-brand-gold bg-cream/60 shadow-sm'
+                                    : 'border-gray-200 hover:border-brand-gold/50 bg-white'
+                                }`}
+                              >
+                                <span
+                                  className={`w-8 h-8 rounded-lg flex items-center justify-center mb-2 ${
+                                    selectedSection.type === opt.value
+                                      ? 'bg-brand-gold text-white'
+                                      : 'bg-brand-navy/5 text-brand-gold'
+                                  }`}
+                                >
+                                  {opt.value === 'book' ? (
+                                    <BookOpen size={15} />
+                                  ) : (
+                                    <Layers size={15} />
+                                  )}
+                                </span>
+                                <span className="block text-xs font-bold text-brand-navy">
+                                  {opt.label}
+                                </span>
+                                <span className="block text-[10px] text-gray-500 mt-0.5 leading-snug">
+                                  {opt.desc}
+                                </span>
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                        <div className="sm:col-span-2 space-y-1.5">
+                          <label className="text-[11px] font-bold text-brand-navy tracking-wider uppercase">
+                            Ícono de la sección
+                          </label>
+                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                            {ICON_OPTIONS.map((opt) => (
+                              <button
+                                key={opt.value}
+                                type="button"
+                                onClick={() =>
+                                  patchSection(selectedSection.id, { icon: opt.value })
+                                }
+                                title={opt.label}
+                                className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border-2 transition-all duration-200 ${
+                                  selectedSection.icon === opt.value
+                                    ? 'border-brand-gold bg-cream/60 shadow-sm'
+                                    : 'border-gray-200 hover:border-brand-gold/50 bg-white'
+                                }`}
+                              >
+                                <span
+                                  className={`w-9 h-9 rounded-lg flex items-center justify-center ${
+                                    selectedSection.icon === opt.value
+                                      ? 'bg-brand-gold text-white'
+                                      : 'bg-brand-navy/5 text-brand-gold'
+                                  }`}
+                                >
+                                  {opt.value === 'briefcase' ? (
+                                    <Briefcase size={17} />
+                                  ) : opt.value === 'pen-tool' ? (
+                                    <PenTool size={17} />
+                                  ) : opt.value === 'book-open' ? (
+                                    <BookOpen size={17} />
+                                  ) : (
+                                    <Search size={17} />
+                                  )}
+                                </span>
+                                <span className="text-[9px] font-semibold text-gray-600 text-center leading-tight">
+                                  {opt.label.replace(/ \(.*\)/, '')}
+                                </span>
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                        <div className="sm:col-span-2 space-y-1.5">
+                          <label className="text-[11px] font-bold text-brand-navy tracking-wider uppercase">
+                            Enlace del botón "Ver todas" (opcional)
+                          </label>
+                          <input
+                            value={selectedSection.link || ''}
+                            onChange={(e) =>
+                              patchSection(selectedSection.id, { link: e.target.value })
+                            }
+                            placeholder="/publicaciones o una URL externa"
+                            className="w-full px-4 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-gold/40"
+                          />
                         </div>
                       </div>
-                      <button
-                        onClick={() =>
-                          patchSection(selectedSection.id, {
-                            isVisible: selectedSection.isVisible === false,
-                          })
-                        }
-                        aria-label="Alternar visibilidad de la sección"
-                        className={`relative w-12 h-6 rounded-full transition-colors duration-200 flex-shrink-0 ${
-                          selectedSection.isVisible === false ? 'bg-gray-300' : 'bg-brand-gold'
-                        }`}
-                      >
-                        <span
-                          className={`absolute top-0.5 w-5 h-5 rounded-full bg-white shadow-md transition-all duration-200 ${
-                            selectedSection.isVisible === false ? 'left-0.5' : 'left-[26px]'
-                          }`}
-                        ></span>
-                      </button>
                     </div>
-                    <div className="sm:col-span-2 space-y-1.5">
-                      <label className="text-[11px] font-bold text-brand-navy tracking-wider uppercase">
-                        Título de la sección
-                      </label>
-                      <input
-                        value={selectedSection.title}
-                        onChange={(e) =>
-                          patchSection(selectedSection.id, { title: e.target.value })
-                        }
-                        placeholder="Ej: INVESTIGACIONES"
-                        className="w-full px-4 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-gold/40"
-                      />
-                    </div>
-                    <div className="space-y-1.5">
-                      <label className="text-[11px] font-bold text-brand-navy tracking-wider uppercase">
-                        Tipo de tarjeta
-                      </label>
-                      <select
-                        value={selectedSection.type}
-                        onChange={(e) =>
-                          patchSection(selectedSection.id, { type: e.target.value as SectionType })
-                        }
-                        className="w-full px-4 py-2.5 rounded-lg border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-brand-gold/40"
-                      >
-                        <option value="carousel">Carrusel (varios ítems)</option>
-                        <option value="book">Publicación destacada (libro)</option>
-                      </select>
-                    </div>
-                    <div className="space-y-1.5">
-                      <label className="text-[11px] font-bold text-brand-navy tracking-wider uppercase">
-                        Ícono
-                      </label>
-                      <select
-                        value={selectedSection.icon}
-                        onChange={(e) =>
-                          patchSection(selectedSection.id, { icon: e.target.value as SectionIcon })
-                        }
-                        className="w-full px-4 py-2.5 rounded-lg border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-brand-gold/40"
-                      >
-                        {ICON_OPTIONS.map((opt) => (
-                          <option key={opt.value} value={opt.value}>
-                            {opt.label}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                    <div className="sm:col-span-2 space-y-1.5">
-                      <label className="text-[11px] font-bold text-brand-navy tracking-wider uppercase">
-                        Enlace del botón "Ver todas" (opcional)
-                      </label>
-                      <input
-                        value={selectedSection.link || ''}
-                        onChange={(e) =>
-                          patchSection(selectedSection.id, { link: e.target.value })
-                        }
-                        placeholder="/publicaciones o una URL externa"
-                        className="w-full px-4 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-gold/40"
-                      />
-                    </div>
-                  </div>
+                  </details>
 
                   {/* Ítems */}
                   <div className="space-y-3">
                     <div className="flex items-center justify-between gap-3">
                       <div>
                         <p className="text-[11px] font-bold text-brand-navy tracking-wider uppercase">
-                          Ítems / Artículos
+                          Publicaciones
                         </p>
                         <p className="text-[11px] text-gray-400">
                           {selectedSection.items.length}{' '}
                           {selectedSection.items.length === 1 ? 'publicación' : 'publicaciones'} en
-                          esta sección
+                          esta categoría
                         </p>
                       </div>
                       <button
                         onClick={() => addItem(selectedSection.id)}
                         className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-brand-gold text-brand-gold text-xs font-bold hover:bg-cream transition-colors"
                       >
-                        <Plus size={13} /> Añadir artículo / ítem
+                        <Plus size={13} /> Añadir publicación
                       </button>
                     </div>
 
                     {selectedSection.items.length === 0 && (
                       <p className="text-xs text-gray-400 bg-gray-50 rounded-lg px-4 py-3 border border-dashed border-gray-200">
-                        Sin ítems todavía. Pulsa "Añadir artículo / ítem" para crear el primero.
+                        Sin publicaciones todavía. Pulsa "Añadir publicación" para crear la primera.
                       </p>
                     )}
 
@@ -876,9 +959,23 @@ export default function AdminPage() {
                                     <span className="block text-sm font-bold text-brand-navy truncate">
                                       {item.title || `Publicación ${itemIndex + 1} (sin título)`}
                                     </span>
-                                    <span className="block text-[11px] text-gray-400 truncate">
-                                      {item.category || 'Sin categoría'}
-                                      {item.meta ? ` · ${item.meta}` : ''}
+                                    <span className="flex flex-wrap items-center gap-1.5 text-[11px] text-gray-400 truncate">
+                                      {item.category && (
+                                        <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-cream text-brand-gold text-[9px] font-bold uppercase tracking-wider">
+                                          {item.category}
+                                        </span>
+                                      )}
+                                      {item.meta && (
+                                        <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-brand-navy/85 text-white text-[9px] font-semibold tracking-wide">
+                                          {item.meta}
+                                        </span>
+                                      )}
+                                      {item.content && (
+                                        <span className="inline-flex items-center gap-1 text-gray-500">
+                                          <Clock size={10} className="text-brand-gold" />
+                                          {readingTime(item.content)}
+                                        </span>
+                                      )}
                                     </span>
                                   </span>
                                   <span className="flex items-center gap-2 flex-shrink-0">
@@ -959,15 +1056,44 @@ export default function AdminPage() {
 
                   {/* Vista previa */}
                   <div className="border-t border-gray-100 pt-5">
-                    <div className="flex items-center gap-2 text-xs text-gray-500 mb-3">
-                      <Eye size={14} className="text-brand-gold" />
-                      <span className="font-bold">Vista previa (así se verá en el sitio)</span>
+                    <div className="flex items-center justify-between gap-3 mb-3">
+                      <div className="flex items-center gap-2 text-xs text-gray-500">
+                        <Eye size={14} className="text-brand-gold" />
+                        <span className="font-bold">Vista previa (así se verá en el sitio)</span>
+                      </div>
+                      {expandedItemId && (
+                        <span className="text-[10px] text-brand-gold font-semibold uppercase tracking-wider">
+                          Editando: publicación en vivo
+                        </span>
+                      )}
                     </div>
-                    <div className="max-w-md mx-auto">
-                      {selectedSection.type === 'book' ? (
-                        <SectionBookCard section={selectedSection} isVisible delay="0s" />
-                      ) : (
-                        <SectionCarouselCard section={selectedSection} isVisible delay="0s" />
+                    <div className="grid gap-6 md:grid-cols-2 items-start">
+                      <div className="max-w-sm mx-auto md:mx-0 w-full">
+                        {(() => {
+                          const previewItem =
+                            selectedSection.items.find((it) => it.id === expandedItemId) ??
+                            selectedSection.items[0]
+                          return previewItem ? (
+                            <PublicacionCard
+                              item={previewItem}
+                              section={selectedSection}
+                              href={itemHref(previewItem, selectedSection)}
+                            />
+                          ) : (
+                            <div className="text-xs text-gray-400 bg-gray-50 rounded-lg px-4 py-8 border border-dashed border-gray-200 text-center">
+                              Añade una publicación para ver la preview.
+                            </div>
+                          )
+                        })()}
+                      </div>
+                      {selectedSection.type === 'book' && (
+                        <div className="max-w-sm mx-auto md:mx-0 w-full">
+                          <SectionBookCard
+                            section={selectedSection}
+                            isVisible
+                            delay="0s"
+                          />
+                        </div>
                       )}
                     </div>
                   </div>

@@ -62,7 +62,7 @@ export default function ItemEditor({
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <p className="text-xs font-bold text-gray-500">
-            {sectionType === 'book' ? 'Publicación' : 'Artículo / Ítem'} {index + 1}
+            Publicación {index + 1}
           </p>
           {item.featured && (
             <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-brand-gold/15 text-brand-gold text-[10px] font-bold uppercase">
@@ -87,7 +87,7 @@ export default function ItemEditor({
           <input
             value={item.title}
             onChange={(e) => onChange({ title: e.target.value })}
-            placeholder="Título del artículo / publicación"
+            placeholder="Título de la publicación"
             autoFocus={autoFocus}
             className="w-full px-3 py-2 rounded-md border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-gold/40"
           />
@@ -96,12 +96,22 @@ export default function ItemEditor({
           <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">
             Categoría
           </label>
-          <input
-            value={item.category || ''}
-            onChange={(e) => onChange({ category: e.target.value })}
-            placeholder="Ej: Investigación, Artículo, Liderazgo..."
-            className="w-full px-3 py-2 rounded-md border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-gold/40"
-          />
+          <div className="flex flex-wrap gap-1.5">
+            {['Investigaciones', 'Artículos', 'Libros'].map((c) => (
+              <button
+                key={c}
+                type="button"
+                onClick={() => onChange({ category: (item.category === c ? '' : c) as SectionItem['category'] })}
+                className={`px-3 py-1.5 rounded-full border text-[11px] font-semibold tracking-wide transition-all duration-200 ${
+                  item.category === c
+                    ? 'bg-brand-navy text-white border-brand-navy shadow-sm'
+                    : 'bg-white border-gray-200 text-gray-500 hover:border-brand-gold/60 hover:text-brand-navy'
+                }`}
+              >
+                {c}
+              </button>
+            ))}
+          </div>
         </div>
         <div className="space-y-1">
           <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">
